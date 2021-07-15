@@ -65,7 +65,13 @@ loop () {
     for (int i = 0; i < 12; i++) {
 
         if (i == bin) {
-            digitalWrite(MOTOR_PINS[i], HIGH);
+            if (bin != prev_bin) {
+                // TODO: for back, if bin is 8 7 6 5, then use a 200 ms delay
+                digitalWrite(MOTOR_PINS[i], HIGH);
+                delay(100);
+                digitalWrite(MOTOR_PINS[i], LOW);
+                prev_bin = bin;
+            }
         } else {
             digitalWrite(MOTOR_PINS[i], LOW);
         }
