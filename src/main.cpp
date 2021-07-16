@@ -7,6 +7,9 @@ int prev_bin;
 
 const int MOTOR_PINS[12] = {12, A0, A1, A2, A3, A4, A5, 5, 6, 9, 10, 11};
 
+void haptics_test();
+void vibrate_motor(int loc);
+
 float magnetic_x, magnetic_y, magnetic_z;
 void 
 setup () {
@@ -64,31 +67,40 @@ loop () {
 
     for (int i = 0; i < 12; i++) {
 
-        if (i == bin) {
-            if (bin != prev_bin) {
-                // TODO: for back, if bin is 8 7 6 5, then use a 200 ms delay
-                digitalWrite(MOTOR_PINS[i], HIGH);
-                delay(100);
-                digitalWrite(MOTOR_PINS[i], LOW);
-                prev_bin = bin;
-            }
+        if (i == bin && bin != prev_bin) {
+            vibrate_motor(i);
+            prev_bin = bin;
         } else {
             digitalWrite(MOTOR_PINS[i], LOW);
         }
     }
-    
+}
 
-    // for (int i = 0; i < 12; i++) {
-        // digitalWrite(MOTOR_PINS[i], HIGH);
-        // delay(100);
-        // digitalWrite(MOTOR_PINS[i], LOW);
-        // delay(50);
-        // digitalWrite(MOTOR_PINS[i], HIGH);
-        // delay(50);
-        // digitalWrite(MOTOR_PINS[i], LOW);
-        // delay(50);
-// 
-        // delay(500);
-    // }
+void
+vibrate_motor(int loc) {
+    int dur = 100;
 
+    // If the motor lies on the back, then increase intensity
+    if (loc >= 5 && loc <= 8) dur = 200;
+
+    digitalWrite(MOTOR_PINS[loc], HIGH);
+    delay(dur);
+    digitalWrite(MOTOR_PINS[loc], LOW);
+}
+
+void
+haptics_test() {
+    // Tests each haptic motor: vibrates each once, goes in a circle.
+    for (int i = 0; i < 12; i++) {
+        digitalWrite(MOTOR_PINS[i], HIGH);
+        delay(100);
+        digitalWrite(MOTOR_PINS[i], LOW);
+        delay(50);
+        digitalWrite(MOTOR_PINS[i], HIGH);
+        delay(50);
+        digitalWrite(MOTOR_PINS[i], LOW);
+        delay(50);
+
+        delay(500);
+    }
 }
