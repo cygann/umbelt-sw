@@ -4,6 +4,7 @@
 #include <Adafruit_NeoPixel.h>
 
 #define PIXEL_PIN 8 
+#define BAT_PIN 20
 
 Adafruit_LIS3MDL lis3mdl;   // magnetometer
 Adafruit_NeoPixel pixels(1, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
@@ -29,15 +30,33 @@ setup () {
 
     lis3mdl.begin_I2C(); // Init magnetometer
 
+    // Neopixel init
+    pinMode(BAT_PIN, INPUT);
     pixels.begin();
     pixels.setBrightness(5);
     pixels.show();   // Send the updated pixel colors to the hardware.
-    pixels.setPixelColor(0, 120, 120, 0);
-    pixels.show();   // Send the updated pixel colors to the hardware.
+
 }
 
 void 
 loop () {
+
+    // Calculate battery voltage
+    int voltage_raw = analogRead(BAT_PIN);
+    Serial.print("Voltage raw: ");
+    Serial.print(voltage_raw);
+    Serial.println("");
+    float voltage = (voltage_raw / 1023.0) * 2 * 3.3;
+
+    // Set Pixel color based on battery charge
+    if (voltage <= 3.4) {
+        pixels.setPixelColor(0, 120, 0, 0);
+    } else if (voltage > 3.4 && voltage <= 3.8) {
+        pixels.setPixelColor(0, 30, 120, 0);
+    } else {
+        pixels.setPixelColor(0, 0, 180, 0);
+    }
+    pixels.show();   // Send the updated pixel colors to the hardware.
 
     // Read from Magnetometer
     sensors_event_t event; 
@@ -50,13 +69,13 @@ loop () {
     magnetic_y = event.magnetic.y - y_off;
     magnetic_z = event.magnetic.z - z_off;
 
-    Serial.println("");
-    Serial.print("Magnetic: ");
-    Serial.print(magnetic_x);
-    Serial.print(" ");
-    Serial.print(magnetic_y);
-    Serial.print(" ");
-    Serial.print(magnetic_z);
+    // Serial.println("");
+    // Serial.print("Magnetic: ");
+    // Serial.print(magnetic_x);
+    // Serial.print(" ");
+    // Serial.print(magnetic_y);
+    // Serial.print(" ");
+    // Serial.print(magnetic_z);
 
     float Pi = 3.14159;
 
@@ -65,15 +84,15 @@ loop () {
     if (heading < 0) { 
         heading = 360 + heading;
     }
-    Serial.print(" ");
-    Serial.print("Compass Heading: ");
-    Serial.print(heading);
-    Serial.print(" ");
+    // Serial.print(" ");
+    // Serial.print("Compass Heading: ");
+    // Serial.print(heading);
+    // Serial.print(" ");
 
     int bin = ((int) heading) / 30;
 
-    Serial.print("Bin: ");
-    Serial.print(bin);
+    // Serial.print("Bin: ");
+    // Serial.print(bin);
 
     for (int i = 0; i < 12; i++) {
 
