@@ -15,6 +15,7 @@ const int MOTOR_PINS[12] = {12, A0, A1, A2, A3, A4, A5, 5, 6, 9, 10, 11};
 void haptics_test();
 void vibrate_single_motor(int loc);
 void compass_debug(float mag_x, float mag_y, float mag_z, float heading, int bin);
+void set_battery_led();
 
 float magnetic_x, magnetic_y, magnetic_z;
 void 
@@ -41,23 +42,7 @@ setup () {
 
 void 
 loop () {
-
-    // Calculate battery voltage
-    int voltage_raw = analogRead(BAT_PIN);
-    Serial.print("Voltage raw: ");
-    Serial.print(voltage_raw);
-    Serial.println("");
-    float voltage = (voltage_raw / 1023.0) * 2 * 3.3;
-
-    // Set Pixel color based on battery charge
-    if (voltage <= 3.4) {
-        pixels.setPixelColor(0, 120, 0, 0);
-    } else if (voltage > 3.4 && voltage <= 3.8) {
-        pixels.setPixelColor(0, 30, 120, 0);
-    } else {
-        pixels.setPixelColor(0, 0, 180, 0);
-    }
-    pixels.show();   // Send the updated pixel colors to the hardware.
+    set_battery_led();
 
     // Read from Magnetometer
     sensors_event_t event; 
@@ -70,7 +55,6 @@ loop () {
     magnetic_y = event.magnetic.y - y_off;
     magnetic_z = event.magnetic.z - z_off;
 
-
     float Pi = 3.14159;
 
     // Calculate the angle of the vector x and z
@@ -79,7 +63,12 @@ loop () {
         heading = 360 + heading;
     }
 
-    int bin = ((int) heading) / 30;
+    // Resolve bin #
+    // int bin = ((int) heading) / 30;
+    int offset_heading = (((int) heading) + 15) % 360;
+    int bin = offset_heading / 30;
+
+    compass_debug(magnetic_x, magnetic_y, magnetic_x, heading, bin);
 
     for (int i = 0; i < 12; i++) {
 
@@ -137,3 +126,24 @@ haptics_test() {
         delay(500);
     }
 }
+
+void
+set_battery_led() {
+    // Calculate battery voltage
+    int voltage_raw = analogRead(BAT_PIN);
+    // Serial.print("Voltage raw: ");
+    // Serial.print(voltage_raw);
+    // Serial.println("");
+    float voltage = (voltage_raw / 1023.0) * 2 * 3.3;
+
+    // Set Pixel color based on battery charge
+    if (voltage <= 3.4) {
+        pixels.setPixelColor(0, 120, 0, 0);
+    } else if (voltage > 3.4 && voltage <= 3.8) {
+        pixels.setPixelColor(0, 30, 120, 0);
+    } else {
+        pixels.setPixelColor(0, 0, 180, 0);
+    }
+    pixels.show();   // Send the updated pixel colors to the hardware.
+}
+
