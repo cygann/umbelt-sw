@@ -1,14 +1,18 @@
 #include "Arduino.h"
 #include <Adafruit_LIS3MDL.h>
 #include <Adafruit_Sensor.h>
+#include <Adafruit_NeoPixel.h>
+
+#define PIXEL_PIN 8 
 
 Adafruit_LIS3MDL lis3mdl;   // magnetometer
+Adafruit_NeoPixel pixels(1, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 int prev_bin;
 
 const int MOTOR_PINS[12] = {12, A0, A1, A2, A3, A4, A5, 5, 6, 9, 10, 11};
 
 void haptics_test();
-void vibrate_motor(int loc);
+void vibrate_single_motor(int loc);
 
 float magnetic_x, magnetic_y, magnetic_z;
 void 
@@ -24,6 +28,12 @@ setup () {
     Serial.println("Umbelt demo");
 
     lis3mdl.begin_I2C(); // Init magnetometer
+
+    pixels.begin();
+    pixels.setBrightness(5);
+    pixels.show();   // Send the updated pixel colors to the hardware.
+    pixels.setPixelColor(0, 120, 120, 0);
+    pixels.show();   // Send the updated pixel colors to the hardware.
 }
 
 void 
@@ -68,7 +78,7 @@ loop () {
     for (int i = 0; i < 12; i++) {
 
         if (i == bin && bin != prev_bin) {
-            vibrate_motor(i);
+            vibrate_single_motor(i);
             prev_bin = bin;
         } else {
             digitalWrite(MOTOR_PINS[i], LOW);
@@ -77,7 +87,7 @@ loop () {
 }
 
 void
-vibrate_motor(int loc) {
+vibrate_single_motor(int loc) {
     int dur = 100;
 
     // If the motor lies on the back, then increase intensity
