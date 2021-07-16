@@ -14,6 +14,7 @@ const int MOTOR_PINS[12] = {12, A0, A1, A2, A3, A4, A5, 5, 6, 9, 10, 11};
 
 void haptics_test();
 void vibrate_single_motor(int loc);
+void compass_debug(float mag_x, float mag_y, float mag_z, float heading, int bin);
 
 float magnetic_x, magnetic_y, magnetic_z;
 void 
@@ -69,13 +70,6 @@ loop () {
     magnetic_y = event.magnetic.y - y_off;
     magnetic_z = event.magnetic.z - z_off;
 
-    // Serial.println("");
-    // Serial.print("Magnetic: ");
-    // Serial.print(magnetic_x);
-    // Serial.print(" ");
-    // Serial.print(magnetic_y);
-    // Serial.print(" ");
-    // Serial.print(magnetic_z);
 
     float Pi = 3.14159;
 
@@ -84,15 +78,8 @@ loop () {
     if (heading < 0) { 
         heading = 360 + heading;
     }
-    // Serial.print(" ");
-    // Serial.print("Compass Heading: ");
-    // Serial.print(heading);
-    // Serial.print(" ");
 
     int bin = ((int) heading) / 30;
-
-    // Serial.print("Bin: ");
-    // Serial.print(bin);
 
     for (int i = 0; i < 12; i++) {
 
@@ -115,6 +102,23 @@ vibrate_single_motor(int loc) {
     digitalWrite(MOTOR_PINS[loc], HIGH);
     delay(dur);
     digitalWrite(MOTOR_PINS[loc], LOW);
+}
+
+void 
+compass_debug(float mag_x, float mag_y, float mag_z, float heading, int bin) {
+    Serial.println("");
+    Serial.print("Magnetic: ");
+    Serial.print(mag_x);
+    Serial.print(" ");
+    Serial.print(mag_y);
+    Serial.print(" ");
+    Serial.print(mag_z);
+    Serial.print(" ");
+    Serial.print("Compass Heading: ");
+    Serial.print(heading);
+    Serial.print(" ");
+    Serial.print("Bin: ");
+    Serial.print(bin);
 }
 
 void
