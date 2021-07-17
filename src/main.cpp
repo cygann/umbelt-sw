@@ -91,6 +91,10 @@ vibrate_single_motor(int loc) {
     digitalWrite(MOTOR_PINS[loc], HIGH);
     delay(dur);
     digitalWrite(MOTOR_PINS[loc], LOW);
+    delay(50);
+    digitalWrite(MOTOR_PINS[loc], HIGH);
+    delay(dur / 2);
+    digitalWrite(MOTOR_PINS[loc], LOW);
 }
 
 void 
