@@ -18,6 +18,7 @@ void vibrate_single_motor(int loc, int dur);
 void compass_update();
 void compass_debug(float mag_x, float mag_y, float mag_z, float heading, int bin);
 void set_battery_led();
+void analog_test();
 
 float magnetic_x, magnetic_y, magnetic_z;
 void 
@@ -45,6 +46,7 @@ setup () {
 void 
 loop () {
     set_battery_led();
+    analog_test();
     // haptics_test_multi();
     // haptics_test();
     // compass_update();
@@ -148,6 +150,22 @@ compass_debug(float mag_x, float mag_y, float mag_z, float heading, int bin) {
     Serial.print(" ");
     Serial.print("Bin: ");
     Serial.print(bin);
+}
+
+void analog_test() {
+
+    int val_max = 40;
+    // Test analog output at 5 different levels
+    for (int i = val_max / 2; i <= val_max; i++) {
+        int value = (i / (float)val_max) * 255;
+        analogWrite(MOTOR_PINS[5], value);
+        Serial.print("Index: ");
+        Serial.println(i);
+        delay(100);
+        analogWrite(MOTOR_PINS[5], 0);
+        delay(300);
+    }
+
 }
 
 void
