@@ -13,7 +13,9 @@ int prev_bin;
 const int MOTOR_PINS[12] = {12, A0, A1, A2, A3, A4, A5, 5, 6, 9, 10, 11};
 
 void haptics_test();
-void vibrate_single_motor(int loc);
+void haptics_test_multi();
+void vibrate_single_motor(int loc, int dur);
+void compass_update();
 void compass_debug(float mag_x, float mag_y, float mag_z, float heading, int bin);
 void set_battery_led();
 
@@ -43,7 +45,13 @@ setup () {
 void 
 loop () {
     set_battery_led();
+    // haptics_test_multi();
+    // haptics_test();
+    // compass_update();
+}
 
+void
+compass_update() {
     // Read from Magnetometer
     sensors_event_t event; 
     lis3mdl.getEvent(&event);
@@ -67,23 +75,51 @@ loop () {
     // int bin = ((int) heading) / 30;
     int offset_heading = (((int) heading) + 15) % 360;
     int bin = offset_heading / 30;
+    int bin2 = offset_heading / 15;
 
-    compass_debug(magnetic_x, magnetic_y, magnetic_x, heading, bin);
+    // compass_debug(magnetic_x, magnetic_y, magnetic_x, heading, bin);
+    Serial.println("");
+    Serial.print(bin);
+    Serial.print(" bin2: ");
+    Serial.print(bin2);
 
-    for (int i = 0; i < 12; i++) {
 
-        if (i == bin && bin != prev_bin) {
-            vibrate_single_motor(i);
-            prev_bin = bin;
+    // if (i == bin && bin != prev_bin) {
+    if (bin2 != prev_bin) {
+        // vibrate_single_motor(i);
+        // prev_bin = bin;
+        //
+        // If even, use true bin value
+        if (bin2 % 2 == 0) {
+            vibrate_single_motor(bin, 100);
+            prev_bin = bin2;
+        // Odd, do half power with two side motors 
         } else {
-            digitalWrite(MOTOR_PINS[i], LOW);
+
+            int mot_1 = bin;
+            int mot_2 = ceil(bin2 / 2.0);
+
+
+            Serial.println("");
+            Serial.print("half power with motors ");
+            Serial.print(mot_1);
+            Serial.print(" ");
+            Serial.print(mot_2);
+
+            digitalWrite(MOTOR_PINS[mot_1], HIGH);
+            digitalWrite(MOTOR_PINS[mot_2], HIGH);
+            delay(75);
+            digitalWrite(MOTOR_PINS[mot_1], LOW);
+            digitalWrite(MOTOR_PINS[mot_2], LOW);
+
+            prev_bin = bin2;
         }
     }
+
 }
 
 void
-vibrate_single_motor(int loc) {
-    int dur = 100;
+vibrate_single_motor(int loc, int dur) {
 
     // If the motor lies on the back, then increase intensity
     if (loc >= 5 && loc <= 8) dur = 200;
@@ -129,6 +165,34 @@ haptics_test() {
 
         delay(500);
     }
+}
+
+void
+haptics_test_multi() {
+    // Tests each haptic motor: vibrates each once, goes in a circle.
+    for (int i = 0; i < 24; i++) {
+        int mot_1 = (i / 2) % 12;
+        int mot_2 = (int) ceil(i / 2.0) % 12;
+
+        int dur = 150;
+        Serial.print("Mot 1: ");
+        Serial.print(mot_1);
+        Serial.print(" mot 2: ");
+        Serial.print(mot_2);
+        Serial.println("");
+
+        if (mot_1 != mot_2) dur = 2 * dur / 3;
+
+        digitalWrite(MOTOR_PINS[mot_1], HIGH);
+        digitalWrite(MOTOR_PINS[mot_2], HIGH);
+        delay(dur);
+        digitalWrite(MOTOR_PINS[mot_1], LOW);
+        digitalWrite(MOTOR_PINS[mot_2], LOW);
+        // delay(50);
+
+        delay(500);
+    }
+
 }
 
 void
