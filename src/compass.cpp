@@ -3,7 +3,7 @@
 #include <haptics.h>
 
 Compass
-compass_init() {
+init_compass() {
 
     Compass c;
     c.prev_bin = -1;

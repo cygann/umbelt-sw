@@ -16,29 +16,21 @@ Compass compass;
 
 void set_battery_led();
 
-// float magnetic_x, magnetic_y, magnetic_z;
 void 
 setup () {
-
-    // Initialize Motor Pins
-    for (int i = 0; i < 12; i++) {
-        pinMode(MOTOR_PINS[i], OUTPUT);
-        digitalWrite(MOTOR_PINS[i], LOW);
-    }
 
     Serial.begin(115200);
     Serial.println("Umbelt demo");
 
-    // lis3mdl.begin_I2C(); // Init magnetometer
-    compass = compass_init();
-
+    // Init umbelt modules
+    init_haptics();
+    compass = init_compass();
 
     // Neopixel init
     pinMode(BAT_PIN, INPUT);
     pixels.begin();
     pixels.setBrightness(5);
     pixels.show();   // Send the updated pixel colors to the hardware.
-
 }
 
 void 

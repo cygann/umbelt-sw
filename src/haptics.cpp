@@ -1,5 +1,14 @@
 #include <haptics.h>
 
+void 
+init_haptics() {
+    // Initialize Motor Pins
+    for (int i = 0; i < 12; i++) {
+        pinMode(MOTOR_PINS[i], OUTPUT);
+        digitalWrite(MOTOR_PINS[i], LOW);
+    }
+}
+
 void
 vibrate_single_motor(int loc, int dur) {
 
