@@ -14,5 +14,4 @@ struct Compass {
 
 Compass init_compass();
 void compass_update(Compass *compass);
-void compass_debug(float mag_x, float mag_y, float mag_z, float heading,
-        int bin);
+void compass_debug(Compass *compass, int bin);
