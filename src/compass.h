@@ -14,6 +14,7 @@ struct Compass {
     int magnetic_y;
     int magnetic_z;
     int heading;
+    int last_update;
 };
 
 Compass init_compass();
