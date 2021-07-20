@@ -3,6 +3,10 @@
 
 const float Pi = 3.14159;
 
+const float X_OFFSET = 31.50;
+const float Y_OFFSET = -57.62;
+const float Z_OFFSET = 59.25;
+
 struct Compass {
     Adafruit_LIS3MDL lis3mdl;   // magnetometer
     int prev_bin;
@@ -15,3 +19,4 @@ struct Compass {
 Compass init_compass();
 void compass_update(Compass *compass);
 void compass_debug(Compass *compass, int bin);
+void resolve_heading(Compass *compass);
