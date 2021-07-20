@@ -14,30 +14,51 @@ init_compass() {
 
 void
 compass_update_continuous(Compass *compass) {
-    // TODO: Add non-constant vibration, and hysteresis
+    // TODO: Filter magnetometer data
     resolve_heading(compass);
 
+    // Give update_dur ms for the update haptics to complete
+    unsigned long time = millis();
+    if (time - compass->update_time >= update_dur) {
+        turn_off_all_motors();
+        if (compass->motor_status) Serial.println("Turning off all motors");
+        compass->motor_status = false;
+    }
+
+    // Update every 20 degrees. 
+    if (!(abs(compass->heading - compass->update_heading) >= 10)) {
+        return;
+    }
+    Serial.println("Updating motors");
+    Serial.print("Heading: ");
+    Serial.println(compass->heading);
+    compass->motor_status = true;
+
+    unsigned long start = millis();
     // Update all motors
     int motor_values[12] = {0};
     for (int i = 0; i < 12; i++) {
+        // Compute difference between the true north heading and the heading of
+        // the motor in question.
         int bin_heading = i * 30;
         int diff = abs(compass->heading - bin_heading);
 
         int mot_val = 0;
-        if (i >= 5 && i <= 8) {
+        if (i >= 5 && i <= 8) { // Make the motors on the back stronger.
             mot_val = ((30 - diff) / 30.0) * 100 + 127;
         } else {
             mot_val = ((30 - diff) / 30.0) * 55 + 127;
         }
         // int mot_val = ((30 - diff) / 30.0) * 255;
-        Serial.println(mot_val);
+        // Serial.println(mot_val);
         mot_val = mot_val >= 0 ? mot_val : 0;
 
         motor_values[i] = mot_val;
         analogWrite(MOTOR_PINS[i], motor_values[i]);
     }
 
-    compass->last_update = millis();
+    compass->update_time = millis();
+    compass->update_heading = compass->heading;
 }
 
 void

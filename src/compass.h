@@ -7,6 +7,8 @@ const float X_OFFSET = 31.50;
 const float Y_OFFSET = -57.62;
 const float Z_OFFSET = 59.25;
 
+const float update_dur = 200; // Time to for update haptics to persist, in ms
+
 struct Compass {
     Adafruit_LIS3MDL lis3mdl;   // magnetometer
     int prev_bin;
@@ -14,7 +16,9 @@ struct Compass {
     int magnetic_y;
     int magnetic_z;
     int heading;
-    int last_update;
+    unsigned long update_time;
+    int update_heading;
+    bool motor_status;
 };
 
 Compass init_compass();

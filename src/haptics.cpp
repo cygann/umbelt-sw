@@ -25,6 +25,13 @@ vibrate_single_motor(int loc, int dur) {
 }
 
 void
+turn_off_all_motors() {
+    for (int i = 0; i < 12; i++) {
+        analogWrite(MOTOR_PINS[i], 0);
+    }
+}
+
+void
 analog_test() {
 
     int val_max = 40;
