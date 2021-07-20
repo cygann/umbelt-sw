@@ -36,6 +36,22 @@ compass_update_continuous(Compass *compass) {
 }
 
 void
+compass_simple(Compass *compass) {
+    resolve_heading(compass);
+    int offset_heading = (((int) compass->heading) + 15) % 360;
+    int bin = offset_heading / 30;
+
+    for (int i = 0; i < 12; i++) {
+        if (i == bin && bin != compass->prev_bin) {
+            vibrate_single_motor(i, 100);
+            compass->prev_bin = bin;
+        } else {
+            digitalWrite(MOTOR_PINS[i], LOW);
+        }
+    }
+} 
+
+void
 compass_update(Compass *compass) {
 
     resolve_heading(compass);
@@ -54,18 +70,6 @@ compass_update(Compass *compass) {
 
     int value = 255;
     int dur = 75;
-
-
-    for (int i = 0; i < 12; i++) {
-        if (i == bin && bin != compass->prev_bin) {
-            vibrate_single_motor(i, 100);
-            compass->prev_bin = bin;
-        } else {
-            digitalWrite(MOTOR_PINS[i], LOW);
-        }
-    }
-
-    return;
 
     if (bin2 != compass->prev_bin) {
         // If the motor lies on the back, then increase intensity
