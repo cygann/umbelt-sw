@@ -13,6 +13,29 @@ init_compass() {
 }
 
 void
+compass_update_continuous(Compass *compass) {
+    // TODO: Add non-constant vibration, and hysteresis
+    resolve_heading(compass);
+
+    int offset_heading = (((int) compass->heading) + 15) % 360;
+
+    int motor_values[12] = {0};
+
+    for (int i = 0; i < 12; i++) {
+        int bin_heading = i * 30;
+        int diff = abs(compass->heading - bin_heading);
+
+        int mot_val = ((30 - diff) / 30.0) * 127 + 127;
+        // int mot_val = ((30 - diff) / 30.0) * 255;
+        Serial.println(mot_val);
+        mot_val = mot_val >= 0 ? mot_val : 0;
+
+        motor_values[i] = mot_val;
+        analogWrite(MOTOR_PINS[i], motor_values[i]);
+    }
+}
+
+void
 compass_update(Compass *compass) {
 
     resolve_heading(compass);
@@ -31,6 +54,18 @@ compass_update(Compass *compass) {
 
     int value = 255;
     int dur = 75;
+
+
+    for (int i = 0; i < 12; i++) {
+        if (i == bin && bin != compass->prev_bin) {
+            vibrate_single_motor(i, 100);
+            compass->prev_bin = bin;
+        } else {
+            digitalWrite(MOTOR_PINS[i], LOW);
+        }
+    }
+
+    return;
 
     if (bin2 != compass->prev_bin) {
         // If the motor lies on the back, then increase intensity
@@ -68,6 +103,8 @@ compass_update(Compass *compass) {
 
 }
 
+// Reads from Magnetometer to get x, y, and z magentic fields, then resolves the
+// heading (in degrees). Updates the compass object to have this heading.
 void
 resolve_heading(Compass *compass) {
     // Read from Magnetometer
