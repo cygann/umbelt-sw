@@ -25,6 +25,29 @@ vibrate_single_motor(int loc, int dur) {
 }
 
 void
+triple_buzz(int loc) {
+
+    analogWrite(MOTOR_PINS[loc], 255);
+    delay(100);
+    analogWrite(MOTOR_PINS[loc], 0);
+    delay(90);
+
+    analogWrite(MOTOR_PINS[loc], 255);
+    delay(100);
+    analogWrite(MOTOR_PINS[loc], 0);
+    delay(90);
+
+    analogWrite(MOTOR_PINS[loc], 255);
+    delay(100);
+    analogWrite(MOTOR_PINS[loc], 0);
+    delay(90);
+}
+
+void
+surround_blink() {
+}
+
+void
 turn_off_all_motors() {
     for (int i = 0; i < 12; i++) {
         analogWrite(MOTOR_PINS[i], 0);
