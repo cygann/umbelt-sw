@@ -137,13 +137,23 @@ compass_update(Compass *compass) {
 // heading (in degrees). Updates the compass object to have this heading.
 void
 resolve_heading(Compass *compass) {
-    // Read from Magnetometer
-    sensors_event_t event; 
-    compass->lis3mdl.getEvent(&event);
 
-    compass->magnetic_x = event.magnetic.x - X_OFFSET;
-    compass->magnetic_y = event.magnetic.y - Y_OFFSET;
-    compass->magnetic_z = event.magnetic.z - Z_OFFSET;
+    int mag_x = 0;
+    int mag_y = 0;
+    int mag_z = 0;
+
+    // Read from Magnetometer: use the average of SAMPLING_N different
+    // measurements to denoise.
+    for (int i = 0; i < SAMPLING_N; i++) {
+        sensors_event_t event; 
+        compass->lis3mdl.getEvent(&event);
+        mag_x += event.magnetic.x;
+        mag_y += event.magnetic.y;
+        mag_z += event.magnetic.z;
+    }
+    compass->magnetic_x = (mag_x / SAMPLING_N) - X_OFFSET;
+    compass->magnetic_y = (mag_y / SAMPLING_N) - Y_OFFSET;
+    compass->magnetic_z = (mag_z / SAMPLING_N) - Z_OFFSET;
 
     // Calculate the angle of the vector x and z and resolve heading.
     float heading = (atan2(compass->magnetic_x, 

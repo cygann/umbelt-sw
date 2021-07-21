@@ -3,7 +3,9 @@
 
 const float Pi = 3.14159;
 
-const float X_OFFSET = 31.50;
+const int SAMPLING_N = 9; // Number of magnetometer measurements for denoising
+
+const float X_OFFSET = 31.50; // Constants from magnetometer calibration
 const float Y_OFFSET = -57.62;
 const float Z_OFFSET = 59.25;
 
@@ -16,9 +18,9 @@ struct Compass {
     int magnetic_y;
     int magnetic_z;
     int heading;
-    unsigned long update_time;
-    int update_heading;
-    bool motor_status;
+    unsigned long update_time; // Time in ms of last haptic update
+    int update_heading; // Heading in deg of last haptic update
+    bool motor_status; // True if motors are on, False if off
 };
 
 Compass init_compass();
