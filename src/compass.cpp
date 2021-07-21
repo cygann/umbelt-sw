@@ -36,7 +36,7 @@ compass_update_continuous(Compass *compass) {
 
     unsigned long start = millis();
     // Update all motors
-    int motor_values[12] = {0};
+    int motor_values[N_MOTORS] = {0};
     for (int i = 0; i < 12; i++) {
         // Compute difference between the true north heading and the heading of
         // the motor in question.

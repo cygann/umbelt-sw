@@ -10,6 +10,26 @@ init_haptics() {
 }
 
 void
+turn_on_motor_set(bool motors[], int value) {
+    for (int i = 0; i < 12; i++) {
+        // Turn on if true in the specified list
+        if (motors[i]) {
+            analogWrite(MOTOR_PINS[i], value);
+        }
+    }
+}
+
+void 
+turn_off_motor_set(bool motors[]) {
+    for (int i = 0; i < 12; i++) {
+        // Turn off if true in the specified list
+        if (motors[i]) {
+            analogWrite(MOTOR_PINS[i], 0);
+        }
+    }
+}
+
+void
 vibrate_single_motor(int loc, int dur) {
 
     // If the motor lies on the back, then increase intensity
@@ -25,26 +45,54 @@ vibrate_single_motor(int loc, int dur) {
 }
 
 void
-triple_buzz(int loc) {
+triple_buzz(bool motors[]) {
 
-    analogWrite(MOTOR_PINS[loc], 255);
+    turn_on_motor_set(motors, 220);
     delay(100);
-    analogWrite(MOTOR_PINS[loc], 0);
+    turn_off_motor_set(motors);
     delay(90);
 
-    analogWrite(MOTOR_PINS[loc], 255);
+    turn_on_motor_set(motors, 220);
     delay(100);
-    analogWrite(MOTOR_PINS[loc], 0);
+    turn_off_motor_set(motors);
     delay(90);
 
-    analogWrite(MOTOR_PINS[loc], 255);
+    turn_on_motor_set(motors, 220);
     delay(100);
-    analogWrite(MOTOR_PINS[loc], 0);
+    turn_off_motor_set(motors);
     delay(90);
+
+    turn_on_motor_set(motors, 220);
+    delay(100);
+    turn_off_motor_set(motors);
+    delay(90);
+
 }
 
 void
 surround_blink() {
+    bool motors[12] = {false};
+    motors[1] = true;
+    motors[4] = true;
+    motors[8] = true;
+
+    // triple_buzz(motors);
+    turn_on_motor_set(motors, 230);
+    delay(150);
+    turn_off_motor_set(motors);
+
+    for (int i = 0; i < N_MOTORS; i++) motors[i] = false;
+
+    motors[3] = true;
+    motors[6] = true;
+    motors[10] = true;
+
+    // triple_buzz(motors);
+    turn_on_motor_set(motors, 230);
+    delay(150);
+    turn_off_motor_set(motors);
+    delay(1000);
+
 }
 
 void

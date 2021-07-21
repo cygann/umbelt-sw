@@ -41,10 +41,7 @@ loop () {
     // haptics_test();
     // compass_update_continuous(&compass);
     // compass_update(&compass);
-    for (int i = 0; i < 12; i ++) {
-        triple_buzz(i);
-        delay(800);
-    }
+    surround_blink();
 }
 
 void
