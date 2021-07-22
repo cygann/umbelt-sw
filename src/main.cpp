@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include <Adafruit_LIS3MDL.h>
+#include <Adafruit_LSM6DS33.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_NeoPixel.h>
 
@@ -43,6 +44,8 @@ loop () {
     // compass_update_continuous(&compass);
     // compass_update(&compass);
     surround_blink();
+    read_accel(&compass);
+
 }
 
 void

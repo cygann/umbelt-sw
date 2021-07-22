@@ -137,8 +137,11 @@ void
 haptics_test() {
     // Tests each haptic motor: vibrates each once, goes in a circle.
     for (int i = 0; i < 12; i++) {
+        Serial.println("");
+        Serial.print("Motor: ");
+        Serial.print(i);
         digitalWrite(MOTOR_PINS[i], HIGH);
-        delay(100);
+        delay(400);
         digitalWrite(MOTOR_PINS[i], LOW);
         delay(50);
         digitalWrite(MOTOR_PINS[i], HIGH);

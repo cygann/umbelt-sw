@@ -1,4 +1,5 @@
 #include <Adafruit_LIS3MDL.h>
+#include <Adafruit_LSM6DS33.h>
 #include <compass.h>
 #include <haptics.h>
 
@@ -8,6 +9,7 @@ init_compass() {
     Compass c;
     c.prev_bin = -1;
     c.lis3mdl.begin_I2C(); // Init magnetometer
+    c.lsm6ds33.begin_I2C();
 
     return c;
 }
@@ -21,7 +23,7 @@ compass_update_continuous(Compass *compass) {
     unsigned long time = millis();
     if (time - compass->update_time >= update_dur) {
         turn_off_all_motors();
-        if (compass->motor_status) Serial.println("Turning off all motors");
+        // if (compass->motor_status) Serial.println("Turning off all motors");
         compass->motor_status = false;
     }
 
@@ -29,9 +31,9 @@ compass_update_continuous(Compass *compass) {
     if (!(abs(compass->heading - compass->update_heading) >= 10)) {
         return;
     }
-    Serial.println("Updating motors");
-    Serial.print("Heading: ");
-    Serial.println(compass->heading);
+    // Serial.println("Updating motors");
+    // Serial.print("Heading: ");
+    // Serial.println(compass->heading);
     compass->motor_status = true;
 
     unsigned long start = millis();
@@ -162,6 +164,37 @@ resolve_heading(Compass *compass) {
         heading = 360 + heading;
     }
     compass->heading = heading;
+}
+
+void
+read_accel(Compass *compass) {
+
+    float accel_x = 0;
+    float accel_y = 0;
+    float accel_z = 0;
+
+    for (int i = 0; i < SAMPLING_N; i++) {
+        sensors_event_t accel;
+        sensors_event_t gyro;
+        sensors_event_t temp;
+        compass->lsm6ds33.getEvent(&accel, &gyro, &temp);
+
+        accel_x += accel.acceleration.x;
+        accel_y += accel.acceleration.y;
+        accel_z += accel.acceleration.z;
+    }
+
+    compass->accel_x = (accel_x / SAMPLING_N);
+    compass->accel_y = (accel_y / SAMPLING_N);
+    compass->accel_z = (accel_z / SAMPLING_N);
+
+    Serial.println("");
+    Serial.print("Accel data: x: ");
+    Serial.print(compass->accel_x);
+    Serial.print(" y: ");
+    Serial.print(compass->accel_y);
+    Serial.print(" z: ");
+    Serial.print(compass->accel_z);
 }
 
 void 
