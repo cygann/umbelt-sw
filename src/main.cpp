@@ -6,6 +6,7 @@
 /* Umbelt library code */
 #include "haptics.h"
 #include "compass.h"
+#include "clock.h"
 
 #define PIXEL_PIN 8 
 #define BAT_PIN 20

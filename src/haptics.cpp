@@ -33,7 +33,7 @@ void
 vibrate_single_motor(int loc, int dur) {
 
     // If the motor lies on the back, then increase intensity
-    if (loc >= 5 && loc <= 8) dur = 200;
+    if (loc >= 4 && loc <= 7) dur = 200;
 
     digitalWrite(MOTOR_PINS[loc], HIGH);
     delay(dur);
@@ -72,22 +72,36 @@ triple_buzz(bool motors[]) {
 void
 surround_blink() {
     bool motors[12] = {false};
-    motors[1] = true;
-    motors[4] = true;
+    motors[0] = true;
+    motors[11] = true;
+    motors[5] = true;
+    motors[6] = true;
+
+    // triple_buzz(motors);
+    turn_on_motor_set(motors, 230);
+    delay(150);
+    turn_off_motor_set(motors);
+    delay(150);
+    turn_on_motor_set(motors, 230);
+    delay(200);
+    turn_off_motor_set(motors);
+
+    for (int i = 0; i < N_MOTORS; i++) motors[i] = false;
+
+    motors[2] = true;
+    motors[3] = true;
+    motors[9] = true;
     motors[8] = true;
 
     // triple_buzz(motors);
     turn_on_motor_set(motors, 230);
     delay(150);
     turn_off_motor_set(motors);
-
-    for (int i = 0; i < N_MOTORS; i++) motors[i] = false;
-
-    motors[3] = true;
-    motors[6] = true;
-    motors[10] = true;
-
-    // triple_buzz(motors);
+    delay(150);
+    turn_on_motor_set(motors, 230);
+    delay(150);
+    turn_off_motor_set(motors);
+    delay(50);
     turn_on_motor_set(motors, 230);
     delay(150);
     turn_off_motor_set(motors);
