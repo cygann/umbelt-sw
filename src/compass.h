@@ -22,9 +22,9 @@ struct Compass {
 
     int heading;
 
-    float accel_x;
-    float accel_y;
-    float accel_z;
+    float gyro_x;
+    float gyro_y;
+    float gyro_z;
 
     int prev_bin;
     unsigned long update_time; // Time in ms of last haptic update
@@ -38,6 +38,6 @@ void compass_update_continuous(Compass *compass);
 void compass_simple(Compass *compass);
 
 void resolve_heading(Compass *compass);
-void read_accel(Compass *compass);
+void read_gyro(Compass *compass);
 
 void compass_debug(Compass *compass, int bin);

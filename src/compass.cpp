@@ -167,11 +167,11 @@ resolve_heading(Compass *compass) {
 }
 
 void
-read_accel(Compass *compass) {
+read_gyro(Compass *compass) {
 
-    float accel_x = 0;
-    float accel_y = 0;
-    float accel_z = 0;
+    float gyro_x = 0;
+    float gyro_y = 0;
+    float gyro_z = 0;
 
     for (int i = 0; i < SAMPLING_N; i++) {
         sensors_event_t accel;
@@ -179,22 +179,27 @@ read_accel(Compass *compass) {
         sensors_event_t temp;
         compass->lsm6ds33.getEvent(&accel, &gyro, &temp);
 
-        accel_x += accel.acceleration.x;
-        accel_y += accel.acceleration.y;
-        accel_z += accel.acceleration.z;
+        gyro_x += gyro.acceleration.x;
+        gyro_y += gyro.acceleration.y;
+        gyro_z += gyro.acceleration.z;
     }
 
-    compass->accel_x = (accel_x / SAMPLING_N);
-    compass->accel_y = (accel_y / SAMPLING_N);
-    compass->accel_z = (accel_z / SAMPLING_N);
+    compass->gyro_x = (gyro_x / SAMPLING_N);
+    compass->gyro_y = (gyro_y / SAMPLING_N);
+    compass->gyro_z = (gyro_z / SAMPLING_N);
 
     Serial.println("");
-    Serial.print("Accel data: x: ");
-    Serial.print(compass->accel_x);
+    Serial.print("Gyro data: x: ");
+    Serial.print(compass->gyro_x);
     Serial.print(" y: ");
-    Serial.print(compass->accel_y);
+    Serial.print(compass->gyro_y);
     Serial.print(" z: ");
-    Serial.print(compass->accel_z);
+    Serial.print(compass->gyro_z);
+
+    // float turn_accel = sqrt(compass->accel_x * compass->accel_x + compass->accel_z * compass->accel_z);
+
+    // Serial.print(" Mag: ");
+    // Serial.print(turn_accel);
 }
 
 void 
