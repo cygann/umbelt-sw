@@ -27,8 +27,13 @@ compass_update_continuous(Compass *compass) {
         compass->motor_status = false;
     }
 
-    // Update every 20 degrees. 
-    if (!(abs(compass->heading - compass->update_heading) >= 10)) {
+    // Update every 10 degrees if moving, update every 20 degrees if not
+    // moving. 
+    int heading_diff = abs(compass->heading - compass->update_heading);
+    bool moving = abs(compass->gyro_y) >= 0.20 ? true : false;
+    if (moving && !(heading_diff >= 10)) {
+        return;
+    } else if (!moving && !(heading_diff >= 20)) {
         return;
     }
     // Serial.println("Updating motors");
@@ -190,16 +195,18 @@ read_gyro(Compass *compass) {
 
     Serial.println("");
     Serial.print("Gyro data: x: ");
-    Serial.print(compass->gyro_x);
-    Serial.print(" y: ");
+    Serial.print("Gyro data: y: ");
+    // Serial.print(compass->gyro_x);
+    // Serial.print(" y: ");
     Serial.print(compass->gyro_y);
-    Serial.print(" z: ");
-    Serial.print(compass->gyro_z);
+    // Serial.print(" z: ");
+    // Serial.print(compass->gyro_z);
 
-    // float turn_accel = sqrt(compass->accel_x * compass->accel_x + compass->accel_z * compass->accel_z);
+    // float move_mag = sqrt(compass->gyro_x * compass->gyro_x + compass->gyro_z * compass->gyro_z);
+// 
+    // Serial.print(" Magnitude: ");
+    // Serial.print(move_mag);
 
-    // Serial.print(" Mag: ");
-    // Serial.print(turn_accel);
 }
 
 void 
