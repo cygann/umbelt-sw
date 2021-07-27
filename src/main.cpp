@@ -3,6 +3,7 @@
 #include <Adafruit_LSM6DS33.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_NeoPixel.h>
+#include <bluefruit.h>
 
 /* Umbelt library code */
 #include "haptics.h"
