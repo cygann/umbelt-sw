@@ -19,13 +19,11 @@ struct BLEInterface {
 
     // Uart over BLE service
     BLEUart bleuart;
-
-    // Packet buffer
-    // uint8_t packetbuffer[];
 };
 
 /* Buffer to hold incoming characters */
-uint8_t packetbuffer[READ_BUFSIZE+1];
+// uint8_t packetbuffer[READ_BUFSIZE + 1];
+extern uint8_t packetbuffer[];
 
 BLEInterface init_bluetooth(void);
 void bluetooth_read(BLEInterface *ble);

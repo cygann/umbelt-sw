@@ -6,6 +6,7 @@
 #include <bluefruit.h>
 
 /* Umbelt library code */
+#include "bluetooth.h"
 #include "haptics.h"
 #include "compass.h"
 #include "clock.h"
@@ -15,6 +16,7 @@
 
 Adafruit_NeoPixel pixels(1, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 
+BLEInterface ble;
 Compass compass;
 
 void set_battery_led();
@@ -24,6 +26,9 @@ setup () {
 
     Serial.begin(115200);
     Serial.println("Umbelt demo");
+
+    // Init bluetooth modules
+    ble = init_bluetooth();
 
     // Init umbelt modules
     init_haptics();
@@ -46,6 +51,8 @@ loop () {
     // compass_update(&compass);
     // surround_blink();
     read_gyro(&compass);
+
+    bluetooth_read(&ble);
 }
 
 void
