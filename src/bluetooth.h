@@ -25,7 +25,7 @@ struct BLEInterface {
 // uint8_t packetbuffer[READ_BUFSIZE + 1];
 // extern uint8_t packetbuffer[];
 
-BLEInterface init_bluetooth(void);
+void init_bluetooth(BLEInterface *ble);
 
 void bluetooth_read(BLEInterface *ble);
 // void bluetooth_read(BLEInterface *ble, uint8_t packetbuffer[]);

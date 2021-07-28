@@ -40,7 +40,7 @@ setup () {
     pixels.show();   // Send the updated pixel colors to the hardware.
 
     // Init bluetooth modules
-    ble = init_bluetooth();
+    init_bluetooth(&ble);
 }
 
 void 
