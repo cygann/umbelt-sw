@@ -38,6 +38,6 @@ void compass_update_continuous(Compass *compass);
 void compass_simple(Compass *compass);
 
 void resolve_heading(Compass *compass);
-void read_gyro(Compass *compass);
+void read_gyro(Compass *compass, bool verbose=false);
 
 void compass_debug(Compass *compass, int bin);

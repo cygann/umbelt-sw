@@ -23,11 +23,16 @@ struct BLEInterface {
 
 /* Buffer to hold incoming characters */
 // uint8_t packetbuffer[READ_BUFSIZE + 1];
-extern uint8_t packetbuffer[];
+// extern uint8_t packetbuffer[];
 
 BLEInterface init_bluetooth(void);
+
 void bluetooth_read(BLEInterface *ble);
+// void bluetooth_read(BLEInterface *ble, uint8_t packetbuffer[]);
+
 void startAdv(BLEInterface *ble);
 float parsefloat(uint8_t *buffer);
 void printHex(const uint8_t * data, const uint32_t numBytes);
+
 uint8_t readPacket(BLEUart *ble_uart, uint16_t timeout);
+// uint8_t readPacket(BLEUart *ble_uart, uint16_t timeout, uint8_t packetbuffer[]);

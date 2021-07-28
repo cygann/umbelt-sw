@@ -172,7 +172,7 @@ resolve_heading(Compass *compass) {
 }
 
 void
-read_gyro(Compass *compass) {
+read_gyro(Compass *compass, bool verbose) {
 
     float gyro_x = 0;
     float gyro_y = 0;
@@ -193,14 +193,15 @@ read_gyro(Compass *compass) {
     compass->gyro_y = (gyro_y / SAMPLING_N);
     compass->gyro_z = (gyro_z / SAMPLING_N);
 
-    Serial.println("");
-    Serial.print("Gyro data: x: ");
-    Serial.print("Gyro data: y: ");
-    // Serial.print(compass->gyro_x);
-    // Serial.print(" y: ");
-    Serial.print(compass->gyro_y);
-    // Serial.print(" z: ");
-    // Serial.print(compass->gyro_z);
+    if (verbose) {
+        Serial.println("");
+        Serial.print("Gyro data: x: ");
+        Serial.print(compass->gyro_x);
+        Serial.print(" y: ");
+        Serial.print(compass->gyro_y);
+        Serial.print(" z: ");
+        Serial.print(compass->gyro_z);
+    }
 
     // float move_mag = sqrt(compass->gyro_x * compass->gyro_x + compass->gyro_z * compass->gyro_z);
 // 

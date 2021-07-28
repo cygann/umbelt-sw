@@ -6,6 +6,10 @@ uint8_t packetbuffer[READ_BUFSIZE + 1];
 BLEInterface 
 init_bluetooth(void) {
 
+  while (!Serial) delay(10);
+
+  Serial.println("Starting up");
+
   BLEInterface ble;
 
   Bluefruit.begin();
@@ -13,12 +17,15 @@ init_bluetooth(void) {
 
   // To be consistent OTA DFU should be added first if it exists
   ble.bledfu.begin();
+  Serial.println("bledfu begin");
 
   // Configure and start the BLE Uart service
   ble.bleuart.begin();
+  Serial.println("bleuart begin");
 
   // Set up and start advertising
   startAdv(&ble);
+  Serial.println("advertise begin");
 
   Serial.println(F("Please use Adafruit Bluefruit LE app to connect in Controller mode"));
   Serial.println(F("Then activate/use the sensors, color picker, game controller, etc!"));
@@ -61,11 +68,19 @@ void startAdv(BLEInterface *ble)
 */
 /**************************************************************************/
 void 
-bluetooth_read(BLEInterface *ble)
-{
+// bluetooth_read(BLEInterface *ble, uint8_t packetbuffer[])
+bluetooth_read(BLEInterface *ble) {
   // Wait for new data to arrive
+  Serial.println("Read attempt");
+  // uint8_t len = readPacket(&(ble->bleuart), 500, packetbuffer);
   uint8_t len = readPacket(&(ble->bleuart), 500);
+  Serial.println("");
+  Serial.print(millis());
+  Serial.print("Read Packet of len ");
+  Serial.print(len);
   if (len == 0) return;
+
+  Serial.println("Here!");
 
   // Got a packet!
   // printHex(packetbuffer, len);
@@ -208,12 +223,16 @@ void printHex(const uint8_t * data, const uint32_t numBytes) {
     @brief  Waits for incoming data and parses it
 */
 /**************************************************************************/
+// uint8_t readPacket(BLEUart *ble_uart, uint16_t timeout, uint8_t packetbuffer[]) {
 uint8_t readPacket(BLEUart *ble_uart, uint16_t timeout) {
   uint16_t origtimeout = timeout, replyidx = 0;
 
   memset(packetbuffer, 0, READ_BUFSIZE);
+  Serial.println("memset done");
+  printHex(packetbuffer, READ_BUFSIZE);
 
   while (timeout--) {
+    Serial.println(timeout);
     if (replyidx >= 20) break;
     if ((packetbuffer[1] == 'A') && (replyidx == PACKET_ACC_LEN))
       break;
@@ -230,7 +249,9 @@ uint8_t readPacket(BLEUart *ble_uart, uint16_t timeout) {
     if ((packetbuffer[1] == 'L') && (replyidx == PACKET_LOCATION_LEN))
       break;
 
+    Serial.println("check1");
     while (ble_uart->available()) {
+      Serial.println("is avail");
       char c =  ble_uart->read();
       if (c == '!') {
         replyidx = 0;
@@ -239,25 +260,34 @@ uint8_t readPacket(BLEUart *ble_uart, uint16_t timeout) {
       replyidx++;
       timeout = origtimeout;
     }
+    Serial.println("check2");
     
     if (timeout == 0) break;
+    Serial.println("check3");
     delay(1);
+    Serial.println("check4");
   }
+    Serial.println("check5");
 
   packetbuffer[replyidx] = 0;  // null term
+    Serial.println("check6");
 
   if (!replyidx)  // no data or timeout 
     return 0;
   if (packetbuffer[0] != '!')  // doesn't start with '!' packet beginning
     return 0;
   
+    Serial.println("check7");
   // check checksum!
   uint8_t xsum = 0;
   uint8_t checksum = packetbuffer[replyidx-1];
+
+    Serial.println("check8");
   
   for (uint8_t i=0; i<replyidx-1; i++) {
     xsum += packetbuffer[i];
   }
+    Serial.println("check9");
   xsum = ~xsum;
 
   // Throw an error message if the checksum's don't match

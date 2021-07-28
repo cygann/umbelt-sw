@@ -19,6 +19,8 @@ Adafruit_NeoPixel pixels(1, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 BLEInterface ble;
 Compass compass;
 
+extern uint8_t packetbuffer[];
+
 void set_battery_led();
 
 void 
@@ -26,9 +28,6 @@ setup () {
 
     Serial.begin(115200);
     Serial.println("Umbelt demo");
-
-    // Init bluetooth modules
-    ble = init_bluetooth();
 
     // Init umbelt modules
     init_haptics();
@@ -39,19 +38,23 @@ setup () {
     pixels.begin();
     pixels.setBrightness(5);
     pixels.show();   // Send the updated pixel colors to the hardware.
+
+    // Init bluetooth modules
+    ble = init_bluetooth();
 }
 
 void 
 loop () {
-    set_battery_led();
+    // set_battery_led();
     // analog_test();
     // haptics_test_multi();
     // haptics_test();
-    compass_update_continuous(&compass);
+    // compass_update_continuous(&compass);
     // compass_update(&compass);
     // surround_blink();
-    read_gyro(&compass);
+    // read_gyro(&compass);
 
+    // bluetooth_read(&ble, packetbuffer);
     bluetooth_read(&ble);
 }
 
