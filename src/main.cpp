@@ -45,16 +45,15 @@ setup () {
 
 void 
 loop () {
-    // set_battery_led();
+    set_battery_led();
     // analog_test();
     // haptics_test_multi();
     // haptics_test();
-    // compass_update_continuous(&compass);
-    // compass_update(&compass);
+  
+    compass_update_continuous(&compass);
     // surround_blink();
-    // read_gyro(&compass);
+    read_gyro(&compass);
 
-    // bluetooth_read(&ble, packetbuffer);
     bluetooth_read(&ble);
 }
 

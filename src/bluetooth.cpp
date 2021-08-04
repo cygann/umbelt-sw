@@ -1,12 +1,14 @@
 #include <bluefruit.h>
+
 #include <bluetooth.h>
+#include <haptics.h>
 
 uint8_t packetbuffer[READ_BUFSIZE + 1];
 
 void
 init_bluetooth(BLEInterface *ble) {
 
-  while (!Serial) delay(10);
+  // while (!Serial) delay(10);
 
   Serial.println("Starting up");
 
@@ -88,6 +90,7 @@ bluetooth_read(BLEInterface *ble) {
   }
 
   // Buttons
+  // Buttons 5 (up), 6 (down), 7 (left), 8 (right) are arrows. 
   if (packetbuffer[1] == 'B') {
     uint8_t buttnum = packetbuffer[2] - '0';
     boolean pressed = packetbuffer[3] - '0';
@@ -96,6 +99,23 @@ bluetooth_read(BLEInterface *ble) {
       Serial.println(" pressed");
     } else {
       Serial.println(" released");
+    }
+
+    switch (buttnum) {
+        case 5:
+            triple_buzz_single_loc(0);
+            break;
+        case 6: 
+            triple_buzz_single_loc(6);
+            break;
+        case 7: 
+            triple_buzz_single_loc(2);
+            break;
+        case 8: 
+            triple_buzz_single_loc(9);
+            break;
+        default:
+            break;
     }
   }
 

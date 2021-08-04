@@ -47,26 +47,34 @@ vibrate_single_motor(int loc, int dur) {
 void
 triple_buzz(bool motors[]) {
 
-    turn_on_motor_set(motors, 220);
+    int power = 255;
+    turn_on_motor_set(motors, power);
     delay(100);
     turn_off_motor_set(motors);
     delay(90);
 
-    turn_on_motor_set(motors, 220);
+    turn_on_motor_set(motors, power);
     delay(100);
     turn_off_motor_set(motors);
     delay(90);
 
-    turn_on_motor_set(motors, 220);
+    turn_on_motor_set(motors, power);
     delay(100);
     turn_off_motor_set(motors);
     delay(90);
 
-    turn_on_motor_set(motors, 220);
+    turn_on_motor_set(motors, power);
     delay(100);
     turn_off_motor_set(motors);
     delay(90);
 
+}
+
+void 
+triple_buzz_single_loc(int loc) {
+    bool motors[12] = {false};
+    motors[loc] = true;
+    triple_buzz(motors);
 }
 
 void

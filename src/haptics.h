@@ -14,6 +14,7 @@ void turn_off_all_motors();
 
 /* --------- Specialty Haptics ---------- */
 void triple_buzz(bool motors[]);
+void triple_buzz_single_loc(int loc);
 void surround_blink();
 
 /* --------- Test & Debug functions ---------- */
