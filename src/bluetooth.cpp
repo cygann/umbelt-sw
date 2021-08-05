@@ -72,6 +72,8 @@ bluetooth_read(BLEInterface *ble) {
   uint8_t len = readPacket(&(ble->bleuart), 500);
   if (len == 0) return;
 
+  // Serial.println(packetbuffer[0]);
+
   // Got a packet!
   // printHex(packetbuffer, len);
 
@@ -278,6 +280,7 @@ uint8_t readPacket(BLEUart *ble_uart, uint16_t timeout) {
   // check checksum!
   uint8_t xsum = 0;
   uint8_t checksum = packetbuffer[replyidx-1];
+
 
   for (uint8_t i=0; i<replyidx-1; i++) {
     xsum += packetbuffer[i];
