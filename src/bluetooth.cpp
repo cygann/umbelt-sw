@@ -78,10 +78,10 @@ bluetooth_read(BLEInterface *ble) {
   // printHex(packetbuffer, len);
 
   // Color
-  if (packetbuffer[1] == 'C') {
-    uint8_t red = packetbuffer[2];
-    uint8_t green = packetbuffer[3];
-    uint8_t blue = packetbuffer[4];
+  if (packetbuffer[2] == 'C') {
+    uint8_t red = packetbuffer[3];
+    uint8_t green = packetbuffer[4];
+    uint8_t blue = packetbuffer[5];
     Serial.print ("RGB #");
     if (red < 0x10) Serial.print("0");
     Serial.print(red, HEX);
@@ -93,9 +93,9 @@ bluetooth_read(BLEInterface *ble) {
 
   // Buttons
   // Buttons 5 (up), 6 (down), 7 (left), 8 (right) are arrows. 
-  if (packetbuffer[1] == 'B') {
-    uint8_t buttnum = packetbuffer[2] - '0';
-    boolean pressed = packetbuffer[3] - '0';
+  if (packetbuffer[2] == 'B') {
+    uint8_t buttnum = packetbuffer[3] - '0';
+    boolean pressed = packetbuffer[4] - '0';
     Serial.print ("Button "); Serial.print(buttnum);
     if (pressed) {
       Serial.println(" pressed");
@@ -122,11 +122,11 @@ bluetooth_read(BLEInterface *ble) {
   }
 
   // GPS Location
-  if (packetbuffer[1] == 'L') {
+  if (packetbuffer[2] == 'L') {
     float lat, lon, alt;
-    lat = parsefloat(packetbuffer+2);
-    lon = parsefloat(packetbuffer+6);
-    alt = parsefloat(packetbuffer+10);
+    lat = parsefloat(packetbuffer+3);
+    lon = parsefloat(packetbuffer+7);
+    alt = parsefloat(packetbuffer+11);
     Serial.print("GPS Location\t");
     Serial.print("Lat: "); Serial.print(lat, 4); // 4 digits of precision!
     Serial.print('\t');
@@ -239,28 +239,25 @@ uint8_t readPacket(BLEUart *ble_uart, uint16_t timeout) {
 
   memset(packetbuffer, 0, READ_BUFSIZE);
 
+  int packet_size = -1;
+
   while (timeout--) {
-    if (replyidx >= 20) break;
-    if ((packetbuffer[1] == 'A') && (replyidx == PACKET_ACC_LEN))
-      break;
-    if ((packetbuffer[1] == 'G') && (replyidx == PACKET_GYRO_LEN))
-      break;
-    if ((packetbuffer[1] == 'M') && (replyidx == PACKET_MAG_LEN))
-      break;
-    if ((packetbuffer[1] == 'Q') && (replyidx == PACKET_QUAT_LEN))
-      break;
-    if ((packetbuffer[1] == 'B') && (replyidx == PACKET_BUTTON_LEN))
-      break;
-    if ((packetbuffer[1] == 'C') && (replyidx == PACKET_COLOR_LEN))
-      break;
-    if ((packetbuffer[1] == 'L') && (replyidx == PACKET_LOCATION_LEN))
-      break;
+    if (replyidx >= READ_BUFSIZE) break;
+    if (replyidx == packet_size) break;
 
     while (ble_uart->available()) {
       char c =  ble_uart->read();
       if (c == '!') {
         replyidx = 0;
       }
+      if (replyidx == 1) {
+          packet_size = c;
+      }
+
+      Serial.print(replyidx);
+      Serial.print(" ");
+      Serial.println(c);
+
       packetbuffer[replyidx] = c;
       replyidx++;
       timeout = origtimeout;
