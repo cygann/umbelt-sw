@@ -252,6 +252,9 @@ uint8_t readPacket(BLEUart *ble_uart, uint16_t timeout) {
       }
       if (replyidx == 1) {
           packet_size = c;
+          Serial.print(" Packet size: ");
+          Serial.print(packet_size);
+          Serial.print("  ");
       }
 
       Serial.print(replyidx);
@@ -276,10 +279,10 @@ uint8_t readPacket(BLEUart *ble_uart, uint16_t timeout) {
   
   // check checksum!
   uint8_t xsum = 0;
-  uint8_t checksum = packetbuffer[replyidx-1];
+  uint8_t checksum = packetbuffer[replyidx - 1];
 
 
-  for (uint8_t i=0; i<replyidx-1; i++) {
+  for (uint8_t i = 0; i < replyidx - 1; i++) {
     xsum += packetbuffer[i];
   }
   xsum = ~xsum;

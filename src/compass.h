@@ -10,7 +10,7 @@ const float X_OFFSET = 31.50; // Constants from magnetometer calibration
 const float Y_OFFSET = -57.62;
 const float Z_OFFSET = 59.25;
 
-const float update_dur = 200; // Time to for update haptics to persist, in ms
+const float UPDATE_DUR = 200; // Time to for update haptics to persist, in ms
 
 struct Compass {
     Adafruit_LIS3MDL lis3mdl;   // magnetometer
@@ -34,7 +34,7 @@ struct Compass {
 
 Compass init_compass();
 void compass_update(Compass *compass);
-void compass_update_continuous(Compass *compass);
+void compass_update_old(Compass *compass);
 void compass_simple(Compass *compass);
 
 void resolve_heading(Compass *compass);

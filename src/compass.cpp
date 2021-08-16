@@ -14,14 +14,28 @@ init_compass() {
     return c;
 }
 
+/*  Performs update to haptics system based on magnetometer and acceleration
+ *  sensors. This function implements several key features of compass haptic
+ *  feedback:
+ *  - Obtains current heading
+ *  - Ensures that haptic updates have UPDATE_DUR ms to occur before turning off
+ *  the motors
+ *  - Selectively sets threshold for new haptics depending on user movement,
+ *  which employs the accelerometer. If the user is sitting still, a larger
+ *  change in heading is needed to produce haptic feedback in order to
+ *  counteract sensitivities in the magnetometer.
+ *  - Uses analogWrite to create continuous transitions between motor
+ *  boundaries. The strongest haptic feedback is provided around the motor most
+ *  centered on the north heading. 
+ */
 void
-compass_update_continuous(Compass *compass) {
+compass_update(Compass *compass) {
     // TODO: Filter magnetometer data
     resolve_heading(compass);
 
-    // Give update_dur ms for the update haptics to complete
+    // Give UPDATE_DUR ms for the update haptics to complete
     unsigned long time = millis();
-    if (time - compass->update_time >= update_dur) {
+    if (time - compass->update_time >= UPDATE_DUR) {
         turn_off_all_motors();
         // if (compass->motor_status) Serial.println("Turning off all motors");
         compass->motor_status = false;
@@ -36,12 +50,12 @@ compass_update_continuous(Compass *compass) {
     } else if (!moving && !(heading_diff >= 20)) {
         return;
     }
-    // Serial.println("Updating motors");
-    // Serial.print("Heading: ");
-    // Serial.println(compass->heading);
-    compass->motor_status = true;
 
+    // We update compass->motor_status = true here to indicate that the motors
+    // are on, which is used for debugging this state machine. 
+    compass->motor_status = true;
     unsigned long start = millis();
+
     // Update all motors
     int motor_values[N_MOTORS] = {0};
     for (int i = 0; i < 12; i++) {
@@ -64,6 +78,11 @@ compass_update_continuous(Compass *compass) {
         analogWrite(MOTOR_PINS[i], motor_values[i]);
     }
 
+    // The time in which we turn on the motors is recorded. This is checked
+    // above to make sure that the motors have been on for UPDATE_DUR ms before
+    // turning back off. 
+    // We also record the heading at the time of this update to figure out
+    // whether the heading has changed enough to update on the next reading.
     compass->update_time = millis();
     compass->update_heading = compass->heading;
 }
@@ -85,7 +104,7 @@ compass_simple(Compass *compass) {
 } 
 
 void
-compass_update(Compass *compass) {
+compass_update_old(Compass *compass) {
 
     resolve_heading(compass);
 

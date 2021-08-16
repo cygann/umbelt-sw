@@ -50,7 +50,7 @@ loop () {
     // haptics_test_multi();
     // haptics_test();
   
-    compass_update_continuous(&compass);
+    compass_update(&compass);
     // surround_blink();
     read_gyro(&compass);
 
