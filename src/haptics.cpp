@@ -124,6 +124,18 @@ turn_off_all_motors() {
     }
 }
 
+/*  Determines if the passed motor would be considered to lie on the "back" of
+ *  the belt. This is useful for determining which motors anatomically touch the
+ *  user's back, where additional motor strength may wish to be applied.
+ */
+bool 
+is_back_facing(int loc) {
+    return (i >= 4 && i <= 7);
+}
+
+
+/* Test & debug functions */
+
 void
 analog_test() {
 

@@ -17,6 +17,9 @@ void triple_buzz(bool motors[]);
 void triple_buzz_single_loc(int loc);
 void surround_blink();
 
+/* Haptic Utility functions */
+bool is_back_facing(int loc);
+
 /* --------- Test & Debug functions ---------- */
 void analog_test();
 void haptics_test();

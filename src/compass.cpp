@@ -65,7 +65,7 @@ compass_update(Compass *compass) {
         int diff = abs(compass->heading - bin_heading);
 
         int mot_val = 0;
-        if (i >= 5 && i <= 8) { // Make the motors on the back stronger.
+        if (is_back_facing(i)) { // Make the motors on the back stronger.
             mot_val = ((30 - diff) / 30.0) * 100 + 127;
         } else {
             mot_val = ((30 - diff) / 30.0) * 55 + 127;
