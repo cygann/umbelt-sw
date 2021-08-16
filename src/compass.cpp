@@ -3,6 +3,11 @@
 #include <compass.h>
 #include <haptics.h>
 
+/* Initializes the compass struct object by begining I2C on the magnetometer and
+ * gyroscope devices.
+ * TODO: both of these sensors (lis3mdl and lsm6ds33) may want to exist outside
+ * of the compass abstraction for other applications.
+ */
 Compass
 init_compass() {
 
@@ -14,14 +19,14 @@ init_compass() {
     return c;
 }
 
-/*  Performs update to haptics system based on magnetometer and acceleration
+/*  Performs update to haptics system based on magnetometer and gyroscope
  *  sensors. This function implements several key features of compass haptic
  *  feedback:
  *  - Obtains current heading
  *  - Ensures that haptic updates have UPDATE_DUR ms to occur before turning off
  *  the motors
  *  - Selectively sets threshold for new haptics depending on user movement,
- *  which employs the accelerometer. If the user is sitting still, a larger
+ *  which employs the gyroscope. If the user is sitting still, a larger
  *  change in heading is needed to produce haptic feedback in order to
  *  counteract sensitivities in the magnetometer.
  *  - Uses analogWrite to create continuous transitions between motor
@@ -85,78 +90,6 @@ compass_update(Compass *compass) {
     // whether the heading has changed enough to update on the next reading.
     compass->update_time = millis();
     compass->update_heading = compass->heading;
-}
-
-void
-compass_simple(Compass *compass) {
-    resolve_heading(compass);
-    int offset_heading = (((int) compass->heading) + 15) % 360;
-    int bin = offset_heading / 30;
-
-    for (int i = 0; i < 12; i++) {
-        if (i == bin && bin != compass->prev_bin) {
-            vibrate_single_motor(i, 100);
-            compass->prev_bin = bin;
-        } else {
-            digitalWrite(MOTOR_PINS[i], LOW);
-        }
-    }
-} 
-
-void
-compass_update_old(Compass *compass) {
-
-    resolve_heading(compass);
-
-    // Resolve bin #
-    // int bin = ((int) heading) / 30;
-    int offset_heading = (((int) compass->heading) + 15) % 360;
-    int bin = offset_heading / 30;
-    int bin2 = offset_heading / 15;
-
-    // compass_debug(&compass, bin);
-    // Serial.println("");
-    // Serial.print(bin);
-    // Serial.print(" bin2: ");
-    // Serial.print(bin2);
-
-    int value = 255;
-    int dur = 75;
-
-    if (bin2 != compass->prev_bin) {
-        // If the motor lies on the back, then increase intensity
-        if (bin >= 5 && bin <= 8) value = 255;
-
-        // If even, use true bin value
-        if (bin2 % 2 == 0) {
-            analogWrite(MOTOR_PINS[bin], value);
-            delay(dur);
-            analogWrite(MOTOR_PINS[bin], 0);
-            compass->prev_bin = bin2;
-        // Odd, do half power with two side motors 
-        } else {
-            int mot_1 = bin;
-            int mot_2 = ceil(bin2 / 2.0);
-
-            Serial.println("");
-            Serial.print("half power with motors ");
-            Serial.print(mot_1);
-            Serial.print(" ");
-            Serial.print(mot_2);
-
-            int new_val = value * 0.75;
-            Serial.print(" New value: ");
-            Serial.print(new_val);
-            analogWrite(MOTOR_PINS[mot_1], new_val);
-            analogWrite(MOTOR_PINS[mot_2], new_val);
-            delay(dur);
-            analogWrite(MOTOR_PINS[mot_1], 0);
-            analogWrite(MOTOR_PINS[mot_2], 0);
-
-            compass->prev_bin = bin2;
-        }
-    }
-
 }
 
 // Reads from Magnetometer to get x, y, and z magentic fields, then resolves the

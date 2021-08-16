@@ -16,17 +16,18 @@ struct Compass {
     Adafruit_LIS3MDL lis3mdl;   // magnetometer
     Adafruit_LSM6DS33 lsm6ds33; // accelerometer, gyroscope
 
+    // Current magnetometer readings for x, y, z
     int magnetic_x;
     int magnetic_y;
     int magnetic_z;
 
-    int heading;
+    int heading;    // Current heading, in degrees
 
+    // Current gyroscope readings for x, y, z
     float gyro_x;
     float gyro_y;
     float gyro_z;
 
-    int prev_bin;
     unsigned long update_time; // Time in ms of last haptic update
     int update_heading; // Heading in deg of last haptic update
     bool motor_status; // True if motors are on, False if off
@@ -34,8 +35,6 @@ struct Compass {
 
 Compass init_compass();
 void compass_update(Compass *compass);
-void compass_update_old(Compass *compass);
-void compass_simple(Compass *compass);
 
 void resolve_heading(Compass *compass);
 void read_gyro(Compass *compass, bool verbose=false);
