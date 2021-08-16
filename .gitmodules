@@ -10,3 +10,6 @@
 [submodule "lib/Adafruit_Sensor"]
 	path = lib/Adafruit_Sensor
 	url = https://github.com/adafruit/Adafruit_Sensor.git
+[submodule "lib/Adafruit_LSM6DS"]
+	path = lib/Adafruit_LSM6DS
+	url = https://github.com/adafruit/Adafruit_LSM6DS.git
