@@ -1,3 +1,10 @@
+/*  Umbelt Compass module.
+ *  Contains functions for reading from magnetometer and gyroscope sensors.
+ *  Updates haptics based on these sensors.
+ *  TODO: change this abstraction where magnetometer and gyro sensors are not
+ *  stuck inside compass such that they could be used for other features.
+ */
+
 #include <Adafruit_LIS3MDL.h>
 #include <Adafruit_LSM6DS33.h>
 #include "Arduino.h"

@@ -123,6 +123,10 @@ resolve_heading(Compass *compass) {
     compass->heading = heading;
 }
 
+/*  Reads from gyroscope. Updates gyro_x, gyro_y, and gyro_z fields of the
+ *  compass object received as argument.
+ *  Includes simple denoising through average of SAMPLING_N samples.
+ */
 void
 read_gyro(Compass *compass, bool verbose) {
 
@@ -130,6 +134,7 @@ read_gyro(Compass *compass, bool verbose) {
     float gyro_y = 0;
     float gyro_z = 0;
 
+    // Read SAMPLING_N samples, average over them.
     for (int i = 0; i < SAMPLING_N; i++) {
         sensors_event_t accel;
         sensors_event_t gyro;
@@ -154,12 +159,6 @@ read_gyro(Compass *compass, bool verbose) {
         Serial.print(" z: ");
         Serial.print(compass->gyro_z);
     }
-
-    // float move_mag = sqrt(compass->gyro_x * compass->gyro_x + compass->gyro_z * compass->gyro_z);
-// 
-    // Serial.print(" Magnitude: ");
-    // Serial.print(move_mag);
-
 }
 
 void 

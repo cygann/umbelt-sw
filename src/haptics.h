@@ -1,3 +1,7 @@
+/*  Umbelt Haptics module.
+ *  Contains functions for acuating and stopping haptic motors on the belt.
+ */
+
 #include <Adafruit_LIS3MDL.h>
 #include "Arduino.h"
 
@@ -17,7 +21,7 @@ void triple_buzz(bool motors[]);
 void triple_buzz_single_loc(int loc);
 void surround_blink();
 
-/* Haptic Utility functions */
+/* --------- Haptic Utility functions ---------- */
 bool is_back_facing(int loc);
 
 /* --------- Test & Debug functions ---------- */
