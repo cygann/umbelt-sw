@@ -130,7 +130,7 @@ turn_off_all_motors() {
  */
 bool 
 is_back_facing(int loc) {
-    return (i >= 4 && i <= 7);
+    return (loc >= 4 && loc <= 7);
 }
 
 

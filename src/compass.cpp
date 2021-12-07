@@ -12,7 +12,7 @@ Compass
 init_compass() {
 
     Compass c;
-    c.prev_bin = -1;
+    // c.prev_bin = -1;
     c.lis3mdl.begin_I2C(); // Init magnetometer
     c.lsm6ds33.begin_I2C();
 
