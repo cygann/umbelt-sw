@@ -11,7 +11,7 @@
 #include "compass.h"
 #include "clock.h"
 
-#define PIXEL_PIN 8 
+#define PIXEL_PIN 8
 #define BAT_PIN 20
 
 Adafruit_NeoPixel pixels(1, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
@@ -23,38 +23,41 @@ extern uint8_t packetbuffer[];
 
 void set_battery_led();
 
-void 
+void
 setup () {
 
     Serial.begin(115200);
     Serial.println("Umbelt demo");
 
     // Init umbelt modules
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
     init_haptics();
-    compass = init_compass();
+    // compass = init_compass();
 
     // Neopixel init
-    pinMode(BAT_PIN, INPUT);
-    pixels.begin();
-    pixels.setBrightness(5);
-    pixels.show();   // Send the updated pixel colors to the hardware.
+    // pinMode(BAT_PIN, INPUT);
+    // pixels.begin();
+    // pixels.setBrightness(5);
+    // pixels.show();   // Send the updated pixel colors to the hardware.
 
     // Init bluetooth modules
-    init_bluetooth(&ble);
+    // init_bluetooth(&ble);
 }
 
-void 
+void
 loop () {
-    set_battery_led();
+    haptics_test();
+    // set_battery_led();
     // analog_test();
     // haptics_test_multi();
     // haptics_test();
-  
-    compass_update(&compass);
-    // surround_blink();
-    read_gyro(&compass);
 
-    bluetooth_read(&ble);
+    // compass_update(&compass);
+    // surround_blink();
+    // read_gyro(&compass);
+
+    // bluetooth_read(&ble);
 }
 
 void

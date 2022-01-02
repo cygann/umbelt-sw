@@ -1,11 +1,13 @@
 #include <haptics.h>
 
-void 
+void
 init_haptics() {
     // Initialize Motor Pins
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < N_MOTORS; i++) {
+        // Setup EN pin and set to low
+        pinMode(MOTOR_PINS[i] + EN_OFFSET, OUTPUT);
+        digitalWrite(MOTOR_PINS[i] + EN_OFFSET, LOW);
         pinMode(MOTOR_PINS[i], OUTPUT);
-        digitalWrite(MOTOR_PINS[i], LOW);
     }
 }
 
@@ -19,7 +21,7 @@ turn_on_motor_set(bool motors[], int value) {
     }
 }
 
-void 
+void
 turn_off_motor_set(bool motors[]) {
     for (int i = 0; i < 12; i++) {
         // Turn off if true in the specified list
@@ -70,7 +72,7 @@ triple_buzz(bool motors[]) {
 
 }
 
-void 
+void
 triple_buzz_single_loc(int loc) {
     bool motors[12] = {false};
     motors[loc] = true;
@@ -128,48 +130,25 @@ turn_off_all_motors() {
  *  the belt. This is useful for determining which motors anatomically touch the
  *  user's back, where additional motor strength may wish to be applied.
  */
-bool 
+bool
 is_back_facing(int loc) {
     return (loc >= 4 && loc <= 7);
 }
 
 
 /* Test & debug functions */
-
-void
-analog_test() {
-
-    int val_max = 40;
-    // Test analog output at 5 different levels
-    for (int i = val_max / 2; i <= val_max; i++) {
-        int value = (i / (float)val_max) * 255;
-        analogWrite(MOTOR_PINS[5], value);
-        Serial.print("Index: ");
-        Serial.println(i);
-        delay(100);
-        analogWrite(MOTOR_PINS[5], 0);
-        delay(300);
-    }
-
-}
-
 void
 haptics_test() {
-    // Tests each haptic motor: vibrates each once, goes in a circle.
-    for (int i = 0; i < 12; i++) {
-        Serial.println("");
-        Serial.print("Motor: ");
-        Serial.print(i);
-        digitalWrite(MOTOR_PINS[i], HIGH);
-        delay(400);
-        digitalWrite(MOTOR_PINS[i], LOW);
+    for (int i = 0; i < N_MOTORS; i++) {
+        digitalWrite(MOTOR_PINS[i] + EN_OFFSET, HIGH);  // enable
+        for (int j = 0; j < 64; j++){  // do J_MAX * TODAL_DELAY = 16 * 6 = 96ms of vibe
+            analogWrite(MOTOR_PINS[i], 512 + 0.85 * 512);
+            delay(3);
+            analogWrite(MOTOR_PINS[i], 512 - 0.85 * 512);
+            delay(3);
+        }
+        digitalWrite(MOTOR_PINS[i] + EN_OFFSET, LOW);  // disable
         delay(50);
-        digitalWrite(MOTOR_PINS[i], HIGH);
-        delay(50);
-        digitalWrite(MOTOR_PINS[i], LOW);
-        delay(50);
-
-        delay(500);
     }
 }
 
