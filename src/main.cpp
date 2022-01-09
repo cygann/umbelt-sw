@@ -21,7 +21,8 @@ Compass compass;
 
 extern uint8_t packetbuffer[];
 
-void set_battery_led();
+// void set_battery_led();
+void init_indicator_led();
 
 void
 setup () {
@@ -30,9 +31,10 @@ setup () {
     Serial.println("Umbelt demo");
 
     // Init umbelt modules
-    pinMode(LED_BUILTIN, OUTPUT);
-    digitalWrite(LED_BUILTIN, HIGH);
     init_haptics();
+    init_indicator_led();
+
+    haptics_test();
     // compass = init_compass();
 
     // Neopixel init
@@ -47,7 +49,7 @@ setup () {
 
 void
 loop () {
-    haptics_test();
+    // haptics_test();
     // set_battery_led();
     // analog_test();
     // haptics_test_multi();
@@ -60,6 +62,13 @@ loop () {
     // bluetooth_read(&ble);
 }
 
+void
+init_indicator_led() {
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
+}
+
+/* Adafruit feathersense neopixel
 void
 set_battery_led() {
     // Calculate battery voltage
@@ -79,4 +88,4 @@ set_battery_led() {
     }
     pixels.show();   // Send the updated pixel colors to the hardware.
 }
-
+*/
