@@ -29,7 +29,7 @@ init_bluetooth(BLEInterface *ble) {
 
   Serial.println(F("Please use Adafruit Bluefruit LE app to connect in Controller mode"));
   Serial.println(F("Then activate/use the sensors, color picker, game controller, etc!"));
-  Serial.println();  
+  Serial.println();
 }
 
 void startAdv(BLEInterface *ble)
@@ -37,7 +37,7 @@ void startAdv(BLEInterface *ble)
   // Advertising packet
   Bluefruit.Advertising.addFlags(BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE);
   Bluefruit.Advertising.addTxPower();
-  
+
   // Include the BLE UART (AKA 'NUS') 128-bit UUID
   Bluefruit.Advertising.addService(ble->bleuart);
 
@@ -50,14 +50,14 @@ void startAdv(BLEInterface *ble)
    * - Interval:  fast mode = 20 ms, slow mode = 152.5 ms
    * - Timeout for fast mode is 30 seconds
    * - Start(timeout) with timeout = 0 will advertise forever (until connected)
-   * 
+   *
    * For recommended advertising interval
-   * https://developer.apple.com/library/content/qa/qa1931/_index.html   
+   * https://developer.apple.com/library/content/qa/qa1931/_index.html
    */
   Bluefruit.Advertising.restartOnDisconnect(true);
   Bluefruit.Advertising.setInterval(32, 244);    // in unit of 0.625 ms
   Bluefruit.Advertising.setFastTimeout(30);      // number of seconds in fast mode
-  Bluefruit.Advertising.start(0);                // 0 = Don't stop advertising after n seconds  
+  Bluefruit.Advertising.start(0);                // 0 = Don't stop advertising after n seconds
 }
 
 /**************************************************************************/
@@ -65,7 +65,7 @@ void startAdv(BLEInterface *ble)
     @brief  Constantly poll for new command or response data
 */
 /**************************************************************************/
-void 
+void
 // bluetooth_read(BLEInterface *ble, uint8_t packetbuffer[])
 bluetooth_read(BLEInterface *ble) {
   // Wait for new data to arrive
@@ -92,7 +92,7 @@ bluetooth_read(BLEInterface *ble) {
   }
 
   // Buttons
-  // Buttons 5 (up), 6 (down), 7 (left), 8 (right) are arrows. 
+  // Buttons 5 (up), 6 (down), 7 (left), 8 (right) are arrows.
   if (packetbuffer[2] == 'B') {
     uint8_t buttnum = packetbuffer[3] - '0';
     boolean pressed = packetbuffer[4] - '0';
@@ -105,16 +105,16 @@ bluetooth_read(BLEInterface *ble) {
 
     switch (buttnum) {
         case 5:
-            triple_buzz_single_loc(0);
+            // triple_buzz_single_loc(0);
             break;
-        case 6: 
-            triple_buzz_single_loc(6);
+        case 6:
+            // triple_buzz_single_loc(6);
             break;
-        case 7: 
-            triple_buzz_single_loc(2);
+        case 7:
+            // triple_buzz_single_loc(2);
             break;
-        case 8: 
-            triple_buzz_single_loc(9);
+        case 8:
+            // triple_buzz_single_loc(9);
             break;
         default:
             break;
@@ -198,7 +198,7 @@ float parsefloat(uint8_t *buffer) {
 }
 
 /**************************************************************************/
-/*! 
+/*!
     @brief  Prints a hexadecimal value in plain characters
     @param  data      Pointer to the byte data
     @param  numBytes  Data length in bytes
@@ -206,7 +206,7 @@ float parsefloat(uint8_t *buffer) {
 /**************************************************************************/
 void printHex(const uint8_t * data, const uint32_t numBytes) {
   uint32_t szPos;
-  for (szPos=0; szPos < numBytes; szPos++) 
+  for (szPos=0; szPos < numBytes; szPos++)
   {
     Serial.print(F("0x"));
     // Append leading 0 for small values
@@ -265,18 +265,18 @@ uint8_t readPacket(BLEUart *ble_uart, uint16_t timeout) {
       replyidx++;
       timeout = origtimeout;
     }
-    
+
     if (timeout == 0) break;
     delay(1);
   }
 
   packetbuffer[replyidx] = 0;  // null term
 
-  if (!replyidx)  // no data or timeout 
+  if (!replyidx)  // no data or timeout
     return 0;
   if (packetbuffer[0] != '!')  // doesn't start with '!' packet beginning
     return 0;
-  
+
   // check checksum!
   uint8_t xsum = 0;
   uint8_t checksum = packetbuffer[replyidx - 1];
@@ -294,7 +294,7 @@ uint8_t readPacket(BLEUart *ble_uart, uint16_t timeout) {
     printHex(packetbuffer, replyidx+1);
     return 0;
   }
-  
+
   // checksum passed!
   return replyidx;
 }

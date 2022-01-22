@@ -31,10 +31,11 @@ init_compass() {
  *  counteract sensitivities in the magnetometer.
  *  - Uses analogWrite to create continuous transitions between motor
  *  boundaries. The strongest haptic feedback is provided around the motor most
- *  centered on the north heading. 
+ *  centered on the north heading.
  */
 void
 compass_update(Compass *compass) {
+    /*
     // TODO: Filter magnetometer data
     resolve_heading(compass);
 
@@ -47,7 +48,7 @@ compass_update(Compass *compass) {
     }
 
     // Update every 10 degrees if moving, update every 20 degrees if not
-    // moving. 
+    // moving.
     int heading_diff = abs(compass->heading - compass->update_heading);
     bool moving = abs(compass->gyro_y) >= 0.20 ? true : false;
     if (moving && !(heading_diff >= 10)) {
@@ -57,7 +58,7 @@ compass_update(Compass *compass) {
     }
 
     // We update compass->motor_status = true here to indicate that the motors
-    // are on, which is used for debugging this state machine. 
+    // are on, which is used for debugging this state machine.
     compass->motor_status = true;
     unsigned long start = millis();
 
@@ -85,17 +86,19 @@ compass_update(Compass *compass) {
 
     // The time in which we turn on the motors is recorded. This is checked
     // above to make sure that the motors have been on for UPDATE_DUR ms before
-    // turning back off. 
+    // turning back off.
     // We also record the heading at the time of this update to figure out
     // whether the heading has changed enough to update on the next reading.
     compass->update_time = millis();
     compass->update_heading = compass->heading;
+    */
 }
 
 // Reads from Magnetometer to get x, y, and z magentic fields, then resolves the
 // heading (in degrees). Updates the compass object to have this heading.
 void
 resolve_heading(Compass *compass) {
+    /*
 
     int mag_x = 0;
     int mag_y = 0;
@@ -104,7 +107,7 @@ resolve_heading(Compass *compass) {
     // Read from Magnetometer: use the average of SAMPLING_N different
     // measurements to denoise.
     for (int i = 0; i < SAMPLING_N; i++) {
-        sensors_event_t event; 
+        sensors_event_t event;
         compass->lis3mdl.getEvent(&event);
         mag_x += event.magnetic.x;
         mag_y += event.magnetic.y;
@@ -115,12 +118,13 @@ resolve_heading(Compass *compass) {
     compass->magnetic_z = (mag_z / SAMPLING_N) - Z_OFFSET;
 
     // Calculate the angle of the vector x and z and resolve heading.
-    float heading = (atan2(compass->magnetic_x, 
+    float heading = (atan2(compass->magnetic_x,
                 compass->magnetic_z) * 180) / Pi;
-    if (heading < 0) { 
+    if (heading < 0) {
         heading = 360 + heading;
     }
     compass->heading = heading;
+    */
 }
 
 /*  Reads from gyroscope. Updates gyro_x, gyro_y, and gyro_z fields of the
@@ -161,7 +165,7 @@ read_gyro(Compass *compass, bool verbose) {
     }
 }
 
-void 
+void
 compass_debug(Compass *compass, int bin) {
     Serial.println("");
     Serial.print("Magnetic: ");
