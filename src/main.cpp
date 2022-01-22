@@ -21,7 +21,8 @@ Compass compass;
 
 extern uint8_t packetbuffer[];
 
-void set_battery_led();
+// void set_battery_led();
+void init_indicator_led();
 
 void
 setup () {
@@ -30,53 +31,18 @@ setup () {
     Serial.println("Umbelt demo");
 
     // Init umbelt modules
-    pinMode(LED_BUILTIN, OUTPUT);
-    digitalWrite(LED_BUILTIN, HIGH);
     init_haptics();
-    // compass = init_compass();
-
-    // Neopixel init
-    // pinMode(BAT_PIN, INPUT);
-    // pixels.begin();
-    // pixels.setBrightness(5);
-    // pixels.show();   // Send the updated pixel colors to the hardware.
-
-    // Init bluetooth modules
-    // init_bluetooth(&ble);
+    init_indicator_led();
 }
 
 void
 loop () {
     haptics_test();
-    // set_battery_led();
-    // analog_test();
-    // haptics_test_multi();
-    // haptics_test();
 
-    // compass_update(&compass);
-    // surround_blink();
-    // read_gyro(&compass);
-
-    // bluetooth_read(&ble);
 }
 
 void
-set_battery_led() {
-    // Calculate battery voltage
-    int voltage_raw = analogRead(BAT_PIN);
-    // Serial.print("Voltage raw: ");
-    // Serial.print(voltage_raw);
-    // Serial.println("");
-    float voltage = (voltage_raw / 1023.0) * 2 * 3.3;
-
-    // Set Pixel color based on battery charge
-    if (voltage <= 3.4) {
-        pixels.setPixelColor(0, 120, 0, 0);
-    } else if (voltage > 3.4 && voltage <= 3.8) {
-        pixels.setPixelColor(0, 30, 120, 0);
-    } else {
-        pixels.setPixelColor(0, 0, 180, 0);
-    }
-    pixels.show();   // Send the updated pixel colors to the hardware.
+init_indicator_led() {
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
 }
-
