@@ -11,8 +11,9 @@ init_haptics() {
   }
 }
 
-void actuate_motor(int motor_pin, int duration, int frequency, double percent_motor) {
+void actuate_motor(int motor_pin, int duration, double percent_motor) {
   digitalWrite(MOTOR_PINS[motor_pin] + EN_OFFSET, HIGH);  // enable
+  int frequency = 3;
   if (percent_motor > 0.85) {
     Serial.println("Motor percentage above 85%. Using 85%");
     percent_motor = 0.85;
@@ -31,7 +32,7 @@ void actuate_motor(int motor_pin, int duration, int frequency, double percent_mo
 void
 haptics_test() {
   for (int i = 0; i < N_MOTORS; i++) {
-    actuate_motor(i, 64, 3, 0.85);
+    actuate_motor(i, 64, 0.85);
     delay(50);
   }
 }
