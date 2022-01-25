@@ -37,7 +37,7 @@ setup () {
 
 void
 loop () {
-    // haptics_test();
+  haptics_test();
 
 }
 
