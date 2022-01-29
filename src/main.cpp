@@ -10,6 +10,7 @@
 #include "haptics.h"
 #include "compass.h"
 #include "clock.h"
+#include "CommandLine.h"
 
 #define PIXEL_PIN 8
 #define BAT_PIN 20
@@ -38,6 +39,8 @@ setup () {
 void
 loop () {
   haptics_test();
+  bool received = getCommandLineFromSerialPort(CommandLine);      //global CommandLine is defined in CommandLine.h
+  if (received) DoMyCommand(CommandLine);
 
 }
 
