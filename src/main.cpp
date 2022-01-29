@@ -10,6 +10,7 @@
 #include "haptics.h"
 #include "compass.h"
 #include "clock.h"
+#include "CommandLine.h"
 
 #define PIXEL_PIN 8
 #define BAT_PIN 20
@@ -41,6 +42,11 @@ loop () {
   //haptics_test();
   if (Serial.available() > 0) {
     Serial.setTimeout(60000); // one minute
+  /* // commandline library stuff
+  haptics_test();
+  bool received = getCommandLineFromSerialPort(CommandLine);      //global CommandLine is defined in CommandLine.h
+  if (received) DoMyCommand(CommandLine);
+  */
 
     Serial.println();
     Serial.println("Enter your percent_motor, followed by RET:");

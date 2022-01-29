@@ -35,6 +35,22 @@ void actuate_motor(int motor_pin, int duration, double percent_motor) {
   digitalWrite(MOTOR_PINS[motor_pin] + EN_OFFSET, LOW);  // disable
 } 
 
+/* Repeats vibration mode for given duration
+ * @param motor_pin	specified motor to vibrate
+ * @param duration_on	length time of vibration in ms
+ * @param percent_motor percent of haptic vibration capacity to vibrate at,
+ * 			not to exceed 0.85
+ * @param duration_off length of delay time between vibration cycle 
+ */
+
+void repeat_motor(int motor_pin, int repeat, int duration_on, int duration_off, double percent_motor) {
+     for(int i = 0; i  < repeat; i++){
+	 actuate_motor(motor_pin, duration_on, percent_motor);
+	 delay(duration_off);
+      }  
+}
+
+
 /* Test & debug functions */
 void
 haptics_test() {
