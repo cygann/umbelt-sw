@@ -33,14 +33,25 @@ void actuate_motor(int motor_pin, int duration, double percent_motor) {
     delay(frequency);
   }
   digitalWrite(MOTOR_PINS[motor_pin] + EN_OFFSET, LOW);  // disable
-}
+} 
 
 /* Test & debug functions */
 void
 haptics_test() {
+
   for (int i = 0; i < N_MOTORS; i++) {
     actuate_motor(i, 64, 0.85);
     delay(50);
+  }
+}
+
+void
+control_device(int duration, double percent_motor, int num_cycles) {
+  for (int cycle = 0; cycle < numCycles; cycle++) {
+    for (int i = 0; i < N_MOTORS; i++) {
+      actuate_motor(i, duration, percent_motor);
+      delay(50);
+    }
   }
 }
 
