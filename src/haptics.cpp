@@ -11,6 +11,13 @@ init_haptics() {
   }
 }
 
+/* Vibrates specified motors for given intensity and duration.
+ *
+ * @param motor_pin	specified motor to vibrate
+ * @param duration	length time of vibration in ms
+ * @param percent_motor percent of haptic vibration capacity to vibrate at,
+ * 			not to exceed 0.85
+ */
 void actuate_motor(int motor_pin, int duration, double percent_motor) {
   digitalWrite(MOTOR_PINS[motor_pin] + EN_OFFSET, HIGH);  // enable
   int frequency = 3;
