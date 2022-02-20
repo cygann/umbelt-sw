@@ -11,6 +11,7 @@
 #include "compass.h"
 #include "clock.h"
 #include "CommandLine.h"
+#include "mmc5633.h"
 
 #define PIXEL_PIN 8
 #define BAT_PIN 20
@@ -39,31 +40,11 @@ setup () {
 
 void
 loop () {
-  //haptics_test();
-  if (Serial.available() > 0) {
-    Serial.setTimeout(60000); // one minute
-  /* // commandline library stuff
-  haptics_test();
-  bool received = getCommandLineFromSerialPort(CommandLine);      //global CommandLine is defined in CommandLine.h
-  if (received) DoMyCommand(CommandLine);
-  */
-
-    Serial.println();
-    Serial.println("Enter your percent_motor, followed by RET:");
-    double percent_motor = Serial.parseInt() * 0.01; // turn to percent
-    Serial.println("percent_motor: ");
-    Serial.print(percent_motor);
-
-    Serial.println();
-    Serial.println("Enter your duration (ms), followed by RET:");
-    int duration = Serial.parseInt();
-    Serial.println("duration: ");
-    Serial.print(duration);
-    
-    
-    control_device(duration, percent_motor, DEFAULT_TEST_CYCLES);
-    Serial.println("----COMPLETE!---");
-  }
+  // haptics_test();
+  actuate_motor(10, 120, 0.85);
+  delay(100);
+  actuate_motor(9, 120, 0.85);
+  delay(100);
 }
 
 void
