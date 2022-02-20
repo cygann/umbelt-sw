@@ -5,18 +5,9 @@
 
 /* Initializes the compass struct object by begining I2C on the magnetometer and
  * gyroscope devices.
- * TODO: both of these sensors (lis3mdl and lsm6ds33) may want to exist outside
- * of the compass abstraction for other applications.
  */
-Compass
-init_compass() {
-
-    Compass c;
-    // c.prev_bin = -1;
-    c.lis3mdl.begin_I2C(); // Init magnetometer
-    c.lsm6ds33.begin_I2C();
-
-    return c;
+Compass::Compass() {
+    // magneto = mmc5633();
 }
 
 /*  Performs update to haptics system based on magnetometer and gyroscope
@@ -35,9 +26,9 @@ init_compass() {
  */
 void
 compass_update(Compass *compass) {
+    // resolve_heading(compass);
     /*
     // TODO: Filter magnetometer data
-    resolve_heading(compass);
 
     // Give UPDATE_DUR ms for the update haptics to complete
     unsigned long time = millis();
@@ -98,8 +89,8 @@ compass_update(Compass *compass) {
 // heading (in degrees). Updates the compass object to have this heading.
 void
 resolve_heading(Compass *compass) {
-    /*
 
+    /*
     int mag_x = 0;
     int mag_y = 0;
     int mag_z = 0;
@@ -132,8 +123,9 @@ resolve_heading(Compass *compass) {
  *  Includes simple denoising through average of SAMPLING_N samples.
  */
 void
-read_gyro(Compass *compass, bool verbose) {
+read_gyro(bool verbose) {
 
+    /*
     float gyro_x = 0;
     float gyro_y = 0;
     float gyro_z = 0;
@@ -163,21 +155,22 @@ read_gyro(Compass *compass, bool verbose) {
         Serial.print(" z: ");
         Serial.print(compass->gyro_z);
     }
+    */
 }
 
 void
-compass_debug(Compass *compass, int bin) {
-    Serial.println("");
-    Serial.print("Magnetic: ");
-    Serial.print(compass->magnetic_x);
-    Serial.print(" ");
-    Serial.print(compass->magnetic_y);
-    Serial.print(" ");
-    Serial.print(compass->magnetic_z);
-    Serial.print(" ");
-    Serial.print("Compass Heading: ");
-    Serial.print(compass->heading);
-    Serial.print(" ");
-    Serial.print("Bin: ");
-    Serial.print(bin);
+compass_debug(int bin) {
+    // Serial.println("");
+    // Serial.print("Magnetic: ");
+    // Serial.print(compass->magnetic_x);
+    // Serial.print(" ");
+    // Serial.print(compass->magnetic_y);
+    // Serial.print(" ");
+    // Serial.print(compass->magnetic_z);
+    // Serial.print(" ");
+    // Serial.print("Compass Heading: ");
+    // Serial.print(compass->heading);
+    // Serial.print(" ");
+    // Serial.print("Bin: ");
+    // Serial.print(bin);
 }

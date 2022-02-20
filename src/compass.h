@@ -6,8 +6,8 @@
  */
 
 #include <Adafruit_LIS3MDL.h>
-#include <Adafruit_LSM6DS33.h>
 #include "Arduino.h"
+// #include "mmc5633.h"
 
 const float Pi = 3.14159;
 
@@ -19,31 +19,35 @@ const float Z_OFFSET = 59.25;
 
 const float UPDATE_DUR = 200; // Time to for update haptics to persist, in ms
 
-struct Compass {
-    Adafruit_LIS3MDL lis3mdl;   // magnetometer
-    Adafruit_LSM6DS33 lsm6ds33; // accelerometer, gyroscope
+class Compass {
+    public:
+        Compass(void);
 
-    // Current magnetometer readings for x, y, z
-    int magnetic_x;
-    int magnetic_y;
-    int magnetic_z;
+    private:
+        // mmc5633 magneto; // Magnetometer
 
-    int heading;    // Current heading, in degrees
+        // Current magnetometer readings for x, y, z
+        int magnetic_x;
+        int magnetic_y;
+        int magnetic_z;
 
-    // Current gyroscope readings for x, y, z
-    float gyro_x;
-    float gyro_y;
-    float gyro_z;
+        int heading;    // Current heading, in degrees
 
-    unsigned long update_time; // Time in ms of last haptic update
-    int update_heading; // Heading in deg of last haptic update
-    bool motor_status; // True if motors are on, False if off
+        // Current gyroscope readings for x, y, z
+        float gyro_x;
+        float gyro_y;
+        float gyro_z;
+
+        unsigned long update_time; // Time in ms of last haptic update
+        int update_heading; // Heading in deg of last haptic update
+        bool motor_status; // True if motors are on, False if off
+
+        void resolve_heading(Compass *compass);
+
 };
 
-Compass init_compass();
 void compass_update(Compass *compass);
 
-void resolve_heading(Compass *compass);
-void read_gyro(Compass *compass, bool verbose=false);
+void read_gyro(bool verbose=false);
 
-void compass_debug(Compass *compass, int bin);
+void compass_debug(int bin);
