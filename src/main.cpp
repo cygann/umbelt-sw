@@ -22,6 +22,8 @@ Adafruit_NeoPixel pixels(1, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 BLEInterface ble;
 Compass compass;
 
+mmc5633 magneto;
+
 extern uint8_t packetbuffer[];
 
 // void set_battery_led();
@@ -36,15 +38,17 @@ setup () {
     // Init umbelt modules
     init_haptics();
     init_indicator_led();
+
+    while (!Serial) {}
+    delay(1000);
+    magneto = mmc5633();
 }
 
 void
 loop () {
-  // haptics_test();
-  actuate_motor(10, 120, 0.85);
-  delay(100);
-  actuate_motor(9, 120, 0.85);
-  delay(100);
+    // haptics_test();
+    delay(100);
+    magneto.read();
 }
 
 void

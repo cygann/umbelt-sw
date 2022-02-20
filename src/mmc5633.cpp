@@ -19,21 +19,15 @@ mmc5633::set_continuous_mode() {
 
 bool
 mmc5633::read() {
-    Serial.println("Starting read");
     Wire.begin();
 
     // If not continous mode, we must first check if reading is ready
     if (!this->continuous_mode) {
-        // Serial.println("hmm");
         Wire.beginTransmission(MMC5633_I2C_ADDR);
-        // Serial.println("hmmm");
         Wire.write(MMC5633_REG_CTRL_0);
-        // Serial.println("hmmmm");
         Wire.write(MMC5633_BYTE_READ);
-        // Serial.println("hmmmmm");
         Wire.endTransmission();
 
-        Serial.println("Indicated read");
 
         // Wait until ready
         bool ready = false;
@@ -42,17 +36,10 @@ mmc5633::read() {
             Wire.write(MMC5633_REG_STATUS_1);
             Wire.endTransmission(); // TODO Repeated start?
 
-            Serial.println("Got status");
-
             Wire.requestFrom(MMC5633_I2C_ADDR, 1);
             ready = Wire.read();
-
-            Serial.print("Status is: ");
-            Serial.println(ready);
         }
     }
-
-    Serial.println("Gettings values");
 
     // begin trans
     // mag addr, write
@@ -70,23 +57,24 @@ mmc5633::read() {
     // Next two bytes: YOUT_0, YOUT_1
     // Final two bytes: ZOUT_0, ZOUT_1
     int bytes = Wire.requestFrom(MMC5633_I2C_ADDR, 6);
-    Serial.println("received: ");
-    Serial.println(bytes);
     delay(1000);
 
-    uint16_t mag_x_b, mag_y_b, mag_z_b;
+    int32_t mag_x_b, mag_y_b, mag_z_b;
     if (Wire.available() >= 6) {
        mag_x_b = Wire.read();
        mag_x_b = mag_x_b << 8;
        mag_x_b |= Wire.read();
+       mag_x_b = mag_x_b - (2 << 14);
 
        mag_y_b = Wire.read();
        mag_y_b = mag_y_b << 8;
        mag_y_b |= Wire.read();
+       mag_y_b = mag_y_b - (2 << 14);
 
        mag_z_b = Wire.read();
        mag_z_b = mag_z_b << 8;
        mag_z_b |= Wire.read();
+       mag_z_b = mag_z_b - (2 << 14);
     } else {
         Serial.println("No reading");
         return false;
