@@ -1,3 +1,6 @@
+#ifndef MMC5633_H
+#define MMC5633_H
+
 #include "Arduino.h"
 // #include <Wire.h>
 
@@ -27,21 +30,21 @@
 #define MMC5633_BYTE_READ 0b00100001
 
 struct mag_reading {
-    float mag_x;
-    float mag_y;
-    float mag_z;
+    int16_t mag_x;
+    int16_t mag_y;
+    int16_t mag_z;
     unsigned long time; // Timestamp of reading
 };
 
-class mmc5633 {
+class MMC5633 {
     public:
-        mmc5633(void);
+        MMC5633(void);
         bool get_reading(mag_reading *reading);
         void set_continuous_mode();
-        bool read();
+        bool read(mag_reading *reading);
     private:
         bool continuous_mode;
 
 };
 
-
+#endif

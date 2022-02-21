@@ -11,7 +11,7 @@
 #include "compass.h"
 #include "clock.h"
 #include "CommandLine.h"
-#include "mmc5633.h"
+#include "MMC5633.h"
 
 #define PIXEL_PIN 8
 #define BAT_PIN 20
@@ -22,7 +22,7 @@ Adafruit_NeoPixel pixels(1, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 BLEInterface ble;
 Compass compass;
 
-mmc5633 magneto;
+MMC5633 magneto;
 
 extern uint8_t packetbuffer[];
 
@@ -41,14 +41,16 @@ setup () {
 
     while (!Serial) {}
     delay(1000);
-    magneto = mmc5633();
+    Serial.println("This is Umbelt");
+    // magneto = MMC5633();
+    compass = Compass();
 }
 
 void
 loop () {
     // haptics_test();
-    delay(100);
-    magneto.read();
+    compass.compass_update();
+    // magneto.read();
 }
 
 void

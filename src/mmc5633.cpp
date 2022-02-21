@@ -1,24 +1,24 @@
-#include "mmc5633.h"
+#include "MMC5633.h"
 #include <Wire.h>
 
-mmc5633::mmc5633() {
+MMC5633::MMC5633() {
     // Serial.println("init'ing MMC5633");
     // Serial.println("init'ing MMC5633");
     continuous_mode = false;
 }
 
 bool
-mmc5633::get_reading(mag_reading *reading) {
+MMC5633::get_reading(mag_reading *reading) {
     return false;
 }
 
 void
-mmc5633::set_continuous_mode() {
+MMC5633::set_continuous_mode() {
     return;
 }
 
 bool
-mmc5633::read() {
+MMC5633::read(mag_reading *reading) {
     Wire.begin();
 
     // If not continous mode, we must first check if reading is ready
@@ -57,7 +57,7 @@ mmc5633::read() {
     // Next two bytes: YOUT_0, YOUT_1
     // Final two bytes: ZOUT_0, ZOUT_1
     int bytes = Wire.requestFrom(MMC5633_I2C_ADDR, 6);
-    delay(1000);
+    delay(8);
 
     int32_t mag_x_b, mag_y_b, mag_z_b;
     if (Wire.available() >= 6) {
@@ -80,14 +80,18 @@ mmc5633::read() {
         return false;
     }
 
-    float mag_x = (float) mag_x_b;
-    float mag_y = (float) mag_y_b;
-    float mag_z = (float) mag_z_b;
+    // float mag_x = (float) mag_x_b;
+    // float mag_y = (float) mag_y_b;
+    // float mag_z = (float) mag_z_b;
 
-    String reading = "X: " + String(mag_x) + " Y: " + String(mag_y) +
-            " Z: " + String(mag_z);
+    String reading_str = "X: " + String(mag_x_b) + " Y: " + String(mag_y_b) +
+            " Z: " + String(mag_z_b);
 
-    Serial.println(reading);
+    reading->mag_x = mag_x_b;
+    reading->mag_y = mag_y_b;
+    reading->mag_z = mag_z_b;
+
+    // Serial.println(reading_str);
 
     // CMM continuous mode
     // write # to ODR[7:0]

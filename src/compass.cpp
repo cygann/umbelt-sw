@@ -1,13 +1,12 @@
-#include <Adafruit_LIS3MDL.h>
-#include <Adafruit_LSM6DS33.h>
 #include <compass.h>
 #include <haptics.h>
+#include <mmc5633.h>
 
 /* Initializes the compass struct object by begining I2C on the magnetometer and
  * gyroscope devices.
  */
 Compass::Compass() {
-    // magneto = mmc5633();
+    magneto = MMC5633();
 }
 
 /*  Performs update to haptics system based on magnetometer and gyroscope
@@ -25,8 +24,8 @@ Compass::Compass() {
  *  centered on the north heading.
  */
 void
-compass_update(Compass *compass) {
-    // resolve_heading(compass);
+Compass::compass_update() {
+    resolve_heading();
     /*
     // TODO: Filter magnetometer data
 
@@ -88,9 +87,8 @@ compass_update(Compass *compass) {
 // Reads from Magnetometer to get x, y, and z magentic fields, then resolves the
 // heading (in degrees). Updates the compass object to have this heading.
 void
-resolve_heading(Compass *compass) {
+Compass::resolve_heading() {
 
-    /*
     int mag_x = 0;
     int mag_y = 0;
     int mag_z = 0;
@@ -98,24 +96,29 @@ resolve_heading(Compass *compass) {
     // Read from Magnetometer: use the average of SAMPLING_N different
     // measurements to denoise.
     for (int i = 0; i < SAMPLING_N; i++) {
-        sensors_event_t event;
-        compass->lis3mdl.getEvent(&event);
-        mag_x += event.magnetic.x;
-        mag_y += event.magnetic.y;
-        mag_z += event.magnetic.z;
+        // sensors_event_t event;
+        mag_reading reading;
+        bool success = magneto.read(&reading);
+        mag_x += reading.mag_x;
+        mag_y += reading.mag_y;
+        mag_z += reading.mag_z;
+
+        if (!success) {
+            Serial.println("Error with read");
+        }
     }
-    compass->magnetic_x = (mag_x / SAMPLING_N) - X_OFFSET;
-    compass->magnetic_y = (mag_y / SAMPLING_N) - Y_OFFSET;
-    compass->magnetic_z = (mag_z / SAMPLING_N) - Z_OFFSET;
+    this->magnetic_x = (mag_x / SAMPLING_N) - X_OFFSET;
+    this->magnetic_y = (mag_y / SAMPLING_N) - Y_OFFSET;
+    this->magnetic_z = (mag_z / SAMPLING_N) - Z_OFFSET;
 
     // Calculate the angle of the vector x and z and resolve heading.
-    float heading = (atan2(compass->magnetic_x,
-                compass->magnetic_z) * 180) / Pi;
+    float heading = (atan2(magnetic_x, magnetic_z) * 180) / Pi;
     if (heading < 0) {
         heading = 360 + heading;
     }
-    compass->heading = heading;
-    */
+    this->heading = heading;
+    Serial.print("Compass heading: ");
+    Serial.println(this->heading);
 }
 
 /*  Reads from gyroscope. Updates gyro_x, gyro_y, and gyro_z fields of the
