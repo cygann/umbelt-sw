@@ -63,7 +63,7 @@ haptics_test() {
 
 void
 control_device(int duration, double percent_motor, int num_cycles) {
-  for (int cycle = 0; cycle < numCycles; cycle++) {
+  for (int cycle = 0; cycle < num_cycles; cycle++) {
     for (int i = 0; i < N_MOTORS; i++) {
       actuate_motor(i, duration, percent_motor);
       delay(50);
