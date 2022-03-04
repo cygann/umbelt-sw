@@ -39,8 +39,8 @@ setup () {
     init_haptics();
     init_indicator_led();
 
-    while (!Serial) {}
-    delay(1000);
+    // while (!Serial) {}
+    delay(1000); // For some reason, this is critical for Serial (?)
     Serial.println("This is Umbelt");
     // magneto = MMC5633();
     compass = Compass();

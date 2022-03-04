@@ -21,6 +21,7 @@ const float Z_OFFSET = 0;
 
 const float UPDATE_DUR = 200; // Time to for update haptics to persist, in ms
 
+
 class Compass {
     public:
         Compass(void);
@@ -46,10 +47,10 @@ class Compass {
         bool motor_status; // True if motors are on, False if off
 
         void resolve_heading();
+        void compass_debug();
 
 };
 
 
 void read_gyro(bool verbose=false);
 
-void compass_debug(int bin);

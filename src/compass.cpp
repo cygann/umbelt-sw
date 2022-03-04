@@ -25,63 +25,15 @@ Compass::Compass() {
  */
 void
 Compass::compass_update() {
-    resolve_heading();
-    /*
-    // TODO: Filter magnetometer data
-
-    // Give UPDATE_DUR ms for the update haptics to complete
-    unsigned long time = millis();
-    if (time - compass->update_time >= UPDATE_DUR) {
-        turn_off_all_motors();
-        // if (compass->motor_status) Serial.println("Turning off all motors");
-        compass->motor_status = false;
+    resolve_heading(); // Every second vibrate the motor
+    if (millis() > this->update_time + 1000) {
+        int bin = 13 - (this->heading * N_MOTORS) / 360;
+        Serial.println("Bin: ");
+        Serial.println(bin);
+        actuate_motor(bin, 100, 0.85);
+        this->update_time = millis();
     }
 
-    // Update every 10 degrees if moving, update every 20 degrees if not
-    // moving.
-    int heading_diff = abs(compass->heading - compass->update_heading);
-    bool moving = abs(compass->gyro_y) >= 0.20 ? true : false;
-    if (moving && !(heading_diff >= 10)) {
-        return;
-    } else if (!moving && !(heading_diff >= 20)) {
-        return;
-    }
-
-    // We update compass->motor_status = true here to indicate that the motors
-    // are on, which is used for debugging this state machine.
-    compass->motor_status = true;
-    unsigned long start = millis();
-
-    // Update all motors
-    int motor_values[N_MOTORS] = {0};
-    for (int i = 0; i < 12; i++) {
-        // Compute difference between the true north heading and the heading of
-        // the motor in question.
-        int bin_heading = i * 30;
-        int diff = abs(compass->heading - bin_heading);
-
-        int mot_val = 0;
-        if (is_back_facing(i)) { // Make the motors on the back stronger.
-            mot_val = ((30 - diff) / 30.0) * 100 + 127;
-        } else {
-            mot_val = ((30 - diff) / 30.0) * 55 + 127;
-        }
-        // int mot_val = ((30 - diff) / 30.0) * 255;
-        // Serial.println(mot_val);
-        mot_val = mot_val >= 0 ? mot_val : 0;
-
-        motor_values[i] = mot_val;
-        analogWrite(MOTOR_PINS[i], motor_values[i]);
-    }
-
-    // The time in which we turn on the motors is recorded. This is checked
-    // above to make sure that the motors have been on for UPDATE_DUR ms before
-    // turning back off.
-    // We also record the heading at the time of this update to figure out
-    // whether the heading has changed enough to update on the next reading.
-    compass->update_time = millis();
-    compass->update_heading = compass->heading;
-    */
 }
 
 // Reads from Magnetometer to get x, y, and z magentic fields, then resolves the
@@ -117,8 +69,8 @@ Compass::resolve_heading() {
         heading = 360 + heading;
     }
     this->heading = heading;
-    Serial.print("Compass heading: ");
-    Serial.println(this->heading);
+    // Serial.print("Compass heading: ");
+    // Serial.println(this->heading);
 }
 
 /*  Reads from gyroscope. Updates gyro_x, gyro_y, and gyro_z fields of the
@@ -162,18 +114,18 @@ read_gyro(bool verbose) {
 }
 
 void
-compass_debug(int bin) {
-    // Serial.println("");
-    // Serial.print("Magnetic: ");
-    // Serial.print(compass->magnetic_x);
-    // Serial.print(" ");
-    // Serial.print(compass->magnetic_y);
-    // Serial.print(" ");
-    // Serial.print(compass->magnetic_z);
-    // Serial.print(" ");
-    // Serial.print("Compass Heading: ");
-    // Serial.print(compass->heading);
-    // Serial.print(" ");
+Compass::compass_debug() {
+    Serial.println("");
+    Serial.print("Magnetic: ");
+    Serial.print(this->magnetic_x);
+    Serial.print(" ");
+    Serial.print(this->magnetic_y);
+    Serial.print(" ");
+    Serial.print(this->magnetic_z);
+    Serial.print(" ");
+    Serial.print("Compass Heading: ");
+    Serial.print(this->heading);
+    Serial.print(" ");
     // Serial.print("Bin: ");
     // Serial.print(bin);
 }
