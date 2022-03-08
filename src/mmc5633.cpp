@@ -17,6 +17,24 @@ MMC5633::set_continuous_mode() {
     return;
 }
 
+/* Initiates a read of NUM_BYTES from the MMC5633 at a particular register.
+ * Calling function should use Wire.read() to read out the bytes.
+ */
+void
+MMC5633::read_from_reg(uint8_t reg, uint8_t num_bytes) {
+    Wire.beginTransmission(MMC5633_I2C_ADDR);
+    Wire.write(reg);
+    Wire.endTransmission(); // false for repeated start
+    Wire.requestFrom(MMC5633_I2C_ADDR, num_bytes);
+}
+
+/* Does not ever seem to actually flag motion. */
+bool
+MMC5633::motion_detected() {
+    read_from_reg(MMC5633_REG_STATUS_1, 1);
+    return Wire.read() & MMC5633_MOTION_DETECTED;
+}
+
 bool
 MMC5633::read(mag_reading *reading) {
     Wire.begin();
@@ -28,16 +46,12 @@ MMC5633::read(mag_reading *reading) {
         Wire.write(MMC5633_BYTE_READ);
         Wire.endTransmission();
 
-
         // Wait until ready
         bool ready = false;
         while (!ready) {
-            Wire.beginTransmission(MMC5633_I2C_ADDR);
-            Wire.write(MMC5633_REG_STATUS_1);
-            Wire.endTransmission(); // TODO Repeated start?
-
-            Wire.requestFrom(MMC5633_I2C_ADDR, 1);
-            ready = Wire.read();
+            read_from_reg(MMC5633_REG_STATUS_1, 1);
+            ready = Wire.read() & MMC5633_MEAS_M_DONE;
+            delayMicroseconds(10);
         }
     }
 
@@ -76,7 +90,7 @@ MMC5633::read(mag_reading *reading) {
        mag_z_b |= Wire.read();
        mag_z_b = mag_z_b - (2 << 14);
     } else {
-        Serial.println("No reading");
+        // Serial.println("No reading");
         return false;
     }
 

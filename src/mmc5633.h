@@ -11,7 +11,10 @@
 #define MMC5633_I2C_ADDR 0x30
 
 #define MMC5633_REG_CTRL_0 0x1B // Init reading
-#define MMC5633_REG_STATUS_1 0x18 // Status for reading ready
+
+#define MMC5633_REG_STATUS_1    0x18 // Status for reading ready
+#define MMC5633_MEAS_M_DONE     0b01000000 // magnetic measurement done
+#define MMC5633_MOTION_DETECTED 0b00000100
 
 #define MMC5633_REG_ST_Y 0x28 // Test reg
 
@@ -42,7 +45,10 @@ class MMC5633 {
         bool get_reading(mag_reading *reading);
         void set_continuous_mode();
         bool read(mag_reading *reading);
+        bool motion_detected();
     private:
+        void read_from_reg(uint8_t reg, uint8_t num_bytes);
+
         bool continuous_mode;
 
 };

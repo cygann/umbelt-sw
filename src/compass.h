@@ -10,7 +10,7 @@
 
 const float Pi = 3.14159;
 
-const int SAMPLING_N = 50; // Number of magnetometer measurements for denoising
+const int SAMPLING_N = 1; // Number of magnetometer measurements for denoising
 
 // const float X_OFFSET = 31.50; // Constants from magnetometer calibration
 // const float Y_OFFSET = -57.62;
@@ -36,6 +36,8 @@ class Compass {
         int magnetic_z;
 
         float heading;    // Current heading, in degrees
+        float prev_heading_update;  // previous heading that was vibrated
+        int prev_motor_update;  // previous motor that was vibrated
 
         // Current gyroscope readings for x, y, z
         float gyro_x;
@@ -46,6 +48,7 @@ class Compass {
         int update_heading; // Heading in deg of last haptic update
         bool motor_status; // True if motors are on, False if off
 
+        bool heading_change_greater_than(float thresh);
         void resolve_heading();
         void compass_debug();
 

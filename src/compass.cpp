@@ -7,6 +7,34 @@
  */
 Compass::Compass() {
     magneto = MMC5633();
+    this->heading = 0;
+    this->prev_heading_update = 0;
+    this->update_time = 0;
+    this->prev_motor_update = 0;
+}
+
+/* Determines if the current heading is greater than thresh degrees from the
+ * last heading when a haptic vibration was produced.
+ */
+bool
+Compass::heading_change_greater_than(float thresh) {
+    // float first_angle = abs(this->heading - this->prev_heading_update);
+    float first_angle = this->heading - this->prev_heading_update;
+    if (first_angle < 0) first_angle *= -1;
+    float second_angle = 360 - first_angle;
+    // float smaller = min(first_angle, second_angle);
+    float smaller;
+    if (first_angle < second_angle) smaller = first_angle;
+    else smaller = first_angle;
+    // Serial.print("heading: ");
+    // Serial.print(this->heading);
+    // Serial.print(", prev_heading: ");
+    // Serial.print(this->prev_heading_update);
+    // Serial.print(", change: ");
+    // Serial.println(smaller);
+    if (smaller > thresh) return true;
+    return false;
+    // return smaller > thresh;
 }
 
 /*  Performs update to haptics system based on magnetometer and gyroscope
@@ -25,13 +53,33 @@ Compass::Compass() {
  */
 void
 Compass::compass_update() {
-    resolve_heading(); // Every second vibrate the motor
     if (millis() > this->update_time + 1000) {
+        resolve_heading(); // Every second vibrate the motor
+        // float first_angle = abs(this->heading - this->prev_heading_update);
+        // float second_angle = 360 - first_angle;
+        // float smaller = min(first_angle, second_angle);
+        // if (smaller < 15) return;
+        // if (!heading_change_greater_than(15)) return;  // WHY WHY WHY WHY WHY WHY WHY
+
+        // Serial.print("heading: ");
+        // Serial.println(this->heading);
         int bin = 13 - (this->heading * N_MOTORS) / 360;
-        Serial.println("Bin: ");
-        Serial.println(bin);
-        actuate_motor(bin, 100, 0.85);
+        // if (bin == this->prev_motor_update) return;  // WHY WHY WHY WHY DOES THIS BREAK IT???
+        //                                              // STOPS WORKING WHEN NOT PLUGGED IN????
+        // Serial.print("Bin: ");
+        // Serial.println(bin);
+        // if (bin == this->prev_motor_update) return;
+        //
+        actuate_motor(1, 80, 0.85);
+        this->prev_motor_update = bin;
         this->update_time = millis();
+        this->prev_heading_update = this->heading;
+        return;
+        //
+        actuate_motor(bin, 80, 0.85);
+        this->prev_motor_update = bin;
+        this->update_time = millis();
+        this->prev_heading_update = this->heading;
     }
 
 }
@@ -40,6 +88,8 @@ Compass::compass_update() {
 // heading (in degrees). Updates the compass object to have this heading.
 void
 Compass::resolve_heading() {
+
+    int start_time = millis();
 
     int mag_x = 0;
     int mag_y = 0;
@@ -55,9 +105,9 @@ Compass::resolve_heading() {
         mag_y += reading.mag_y;
         mag_z += reading.mag_z;
 
-        if (!success) {
-            Serial.println("Error with read");
-        }
+        // if (!success) {
+            // Serial.println("Error with read");
+        // }
     }
     this->magnetic_x = (mag_x / SAMPLING_N) - X_OFFSET;
     this->magnetic_y = (mag_y / SAMPLING_N) - Y_OFFSET;
@@ -71,6 +121,9 @@ Compass::resolve_heading() {
     this->heading = heading;
     // Serial.print("Compass heading: ");
     // Serial.println(this->heading);
+
+    // Serial.print("heading update elasped time: ");
+    // Serial.println(millis() - start_time);
 }
 
 /*  Reads from gyroscope. Updates gyro_x, gyro_y, and gyro_z fields of the
@@ -115,17 +168,17 @@ read_gyro(bool verbose) {
 
 void
 Compass::compass_debug() {
-    Serial.println("");
-    Serial.print("Magnetic: ");
-    Serial.print(this->magnetic_x);
-    Serial.print(" ");
-    Serial.print(this->magnetic_y);
-    Serial.print(" ");
-    Serial.print(this->magnetic_z);
-    Serial.print(" ");
-    Serial.print("Compass Heading: ");
-    Serial.print(this->heading);
-    Serial.print(" ");
+    // Serial.println("");
+    // Serial.print("Magnetic: ");
+    // Serial.print(this->magnetic_x);
+    // Serial.print(" ");
+    // Serial.print(this->magnetic_y);
+    // Serial.print(" ");
+    // Serial.print(this->magnetic_z);
+    // Serial.print(" ");
+    // Serial.print("Compass Heading: ");
+    // Serial.print(this->heading);
+    // Serial.print(" ");
     // Serial.print("Bin: ");
     // Serial.print(bin);
 }
