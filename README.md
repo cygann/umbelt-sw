@@ -4,6 +4,8 @@
 
 Prerequisites: PlatformIO (PIO)
 
+0. Install platformio with `pip install -U platformio` (create a virtualenv if desired). Alternate install options [here](https://docs.platformio.org/en/latest/core/installation.html).
+
 First time setup:
 
 1. Clone repository
