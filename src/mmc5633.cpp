@@ -51,7 +51,7 @@ MMC5633::read(mag_reading *reading) {
         while (!ready) {
             read_from_reg(MMC5633_REG_STATUS_1, 1);
             ready = Wire.read() & MMC5633_MEAS_M_DONE;
-            delayMicroseconds(10);
+            delay(10);
         }
     }
 
