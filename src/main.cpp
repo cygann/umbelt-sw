@@ -32,7 +32,7 @@ void init_indicator_led();
 void
 setup () {
 
-    // Serial.begin(9600);
+    Serial.begin(9600);
     // Serial.println("Umbelt demo");
 
     // Init umbelt modules
@@ -48,10 +48,9 @@ setup () {
 
 void
 loop () {
-    // haptics_test();
-    compass.compass_update();
+    haptics_test();
+    // compass.compass_update();
     // magneto.read();
-    delay(100);
 }
 
 void
