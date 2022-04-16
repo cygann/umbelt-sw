@@ -55,7 +55,6 @@ void repeat_motor(int motor_pin, int repeat, int duration_on, int duration_off, 
 /* Test & debug functions */
 void
 haptics_test() {
-
   for (int i = 0; i < N_MOTORS; i++) {
     actuate_motor(i, 120, 0.85);
     delay(1000);
