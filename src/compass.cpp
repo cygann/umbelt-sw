@@ -18,23 +18,16 @@ Compass::Compass() {
  */
 bool
 Compass::heading_change_greater_than(float thresh) {
-    // float first_angle = abs(this->heading - this->prev_heading_update);
-    float first_angle = this->heading - this->prev_heading_update;
-    if (first_angle < 0) first_angle *= -1;
+    float first_angle = abs(this->heading - this->prev_heading_update);
     float second_angle = 360 - first_angle;
-    // float smaller = min(first_angle, second_angle);
-    float smaller;
-    if (first_angle < second_angle) smaller = first_angle;
-    else smaller = first_angle;
+    float smaller = min(first_angle, second_angle);
     // Serial.print("heading: ");
     // Serial.print(this->heading);
     // Serial.print(", prev_heading: ");
     // Serial.print(this->prev_heading_update);
     // Serial.print(", change: ");
     // Serial.println(smaller);
-    if (smaller > thresh) return true;
-    return false;
-    // return smaller > thresh;
+    return smaller > thresh;
 }
 
 /*  Performs update to haptics system based on magnetometer and gyroscope
@@ -55,27 +48,10 @@ void
 Compass::compass_update() {
     if (millis() > this->update_time + 1000) {
         resolve_heading(); // Every second vibrate the motor
-        // float first_angle = abs(this->heading - this->prev_heading_update);
-        // float second_angle = 360 - first_angle;
-        // float smaller = min(first_angle, second_angle);
-        // if (smaller < 15) return;
-        // if (!heading_change_greater_than(15)) return;  // WHY WHY WHY WHY WHY WHY WHY
-
-        // Serial.print("heading: ");
-        // Serial.println(this->heading);
+        if (!heading_change_greater_than(15)) return;
         int bin = 13 - (this->heading * N_MOTORS) / 360;
-        // if (bin == this->prev_motor_update) return;  // WHY WHY WHY WHY DOES THIS BREAK IT???
-        //                                              // STOPS WORKING WHEN NOT PLUGGED IN????
         // Serial.print("Bin: ");
         // Serial.println(bin);
-        // if (bin == this->prev_motor_update) return;
-        //
-        actuate_motor(1, 80, 0.85);
-        this->prev_motor_update = bin;
-        this->update_time = millis();
-        this->prev_heading_update = this->heading;
-        return;
-        //
         actuate_motor(bin, 80, 0.85);
         this->prev_motor_update = bin;
         this->update_time = millis();
