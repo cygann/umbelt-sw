@@ -19,3 +19,4 @@ void init_haptics();
 /* --------- Test & Debug functions ---------- */
 void haptics_test();
 void control_device(int duration, double percent_motor, int num_cycles);
+void actuate_motor(int motor_pin, int duration, double percent_motor);

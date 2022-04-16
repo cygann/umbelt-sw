@@ -5,45 +5,55 @@
  *  stuck inside compass such that they could be used for other features.
  */
 
-#include <Adafruit_LIS3MDL.h>
-#include <Adafruit_LSM6DS33.h>
 #include "Arduino.h"
+#include "mmc5633.h"
 
 const float Pi = 3.14159;
 
-const int SAMPLING_N = 50; // Number of magnetometer measurements for denoising
+const int SAMPLING_N = 1; // Number of magnetometer measurements for denoising
 
-const float X_OFFSET = 31.50; // Constants from magnetometer calibration
-const float Y_OFFSET = -57.62;
-const float Z_OFFSET = 59.25;
+// const float X_OFFSET = 31.50; // Constants from magnetometer calibration
+// const float Y_OFFSET = -57.62;
+// const float Z_OFFSET = 59.25;
+const float X_OFFSET = 0; // Constants from magnetometer calibration
+const float Y_OFFSET = 0;
+const float Z_OFFSET = 0;
 
 const float UPDATE_DUR = 200; // Time to for update haptics to persist, in ms
 
-struct Compass {
-    Adafruit_LIS3MDL lis3mdl;   // magnetometer
-    Adafruit_LSM6DS33 lsm6ds33; // accelerometer, gyroscope
 
-    // Current magnetometer readings for x, y, z
-    int magnetic_x;
-    int magnetic_y;
-    int magnetic_z;
+class Compass {
+    public:
+        Compass(void);
+        void compass_update();
 
-    int heading;    // Current heading, in degrees
+    private:
+        MMC5633 magneto; // Magnetometer
 
-    // Current gyroscope readings for x, y, z
-    float gyro_x;
-    float gyro_y;
-    float gyro_z;
+        // Current magnetometer readings for x, y, z
+        int magnetic_x;
+        int magnetic_y;
+        int magnetic_z;
 
-    unsigned long update_time; // Time in ms of last haptic update
-    int update_heading; // Heading in deg of last haptic update
-    bool motor_status; // True if motors are on, False if off
+        float heading;    // Current heading, in degrees
+        float prev_heading_update;  // previous heading that was vibrated
+        int prev_motor_update;  // previous motor that was vibrated
+
+        // Current gyroscope readings for x, y, z
+        float gyro_x;
+        float gyro_y;
+        float gyro_z;
+
+        unsigned long update_time; // Time in ms of last haptic update
+        int update_heading; // Heading in deg of last haptic update
+        bool motor_status; // True if motors are on, False if off
+
+        bool heading_change_greater_than(float thresh);
+        void resolve_heading();
+        void compass_debug();
+
 };
 
-Compass init_compass();
-void compass_update(Compass *compass);
 
-void resolve_heading(Compass *compass);
-void read_gyro(Compass *compass, bool verbose=false);
+void read_gyro(bool verbose=false);
 
-void compass_debug(Compass *compass, int bin);
