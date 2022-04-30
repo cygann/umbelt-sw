@@ -20,3 +20,19 @@ Compiling, uploading to device, and monitoring serial output:
 6. Compile with `pio run`.
 7. Upload (and compile) with `pio run -t upload`.
 8. Monitor serial activity with `pio device monitor`.
+
+## Board Bringup
+
+After soldering on components, it's useful to check the soldering of the motor drivers before adding the flex PCB. A test program which writes each motor output high then low repeatedly and a multimeter probing the high density connector on the board can be used to verify the soldering.
+
+1. Solder components onto the rigid PCB
+2. Do a basic electrical test
+    a. Check that 5V and 3V3 are not shorted to ground
+![electrical test locations](./img/electrical_test.jpg)
+3. Flash the bootloader from [cygann/Adafruit_nRF52_Bootloader](https://github.com/cygann/Adafruit_nRF52_Bootloader) to the umbelt.
+    a. Plug the board into 5V via the USB-C connector. Turn the switch to the `ON` position to enable the 3V regulator.
+    b. Connect a J-Link to the SWD/debug port.
+    c. Flash the bootloader with `make BOARD=feather_nrf52840_express flash`.
+4. Upload the motor testing program with `pio run -t upload -e motortest`.
+5. Use a multimeter in DC voltage mode to probe each thin pad on the high density flex connector with the other probe on GND. Check that each motor output swings a from 0 to 3.3V. If any outputs don't do this then the soldering of the corresponding motor driver probably needs to be fixed.
+
