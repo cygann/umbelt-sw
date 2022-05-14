@@ -6,7 +6,7 @@
 #include <bluefruit.h>
 
 /* Umbelt library code */
-#include "bluetooth.h"
+#include "umbelt_ble.h"
 #include "haptics.h"
 #include "compass.h"
 #include "clock.h"
@@ -44,6 +44,7 @@ setup () {
     // Serial.println("This is Umbelt");
     // magneto = MMC5633();
     compass = Compass();
+
 }
 
 void
