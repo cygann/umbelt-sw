@@ -11,18 +11,6 @@ umbelt_ble_init(BLEInterface *ble) {
 
   Bluefruit.begin();
   Bluefruit.setTxPower(4);    // Check bluefruit.h for supported values
-
-  // Configure and start the BLE Uart service
-  // ble->bleuart.begin();
-  // Serial.println("bleuart begin");
-
-  // Set up and start advertising
-  // startAdv(ble);
-  // Serial.println("advertise begin");
-//
-  // Serial.println(F("Please use Adafruit Bluefruit LE app to connect in Controller mode"));
-  // Serial.println(F("Then activate/use the sensors, color picker, game controller, etc!"));
-  // Serial.println();
 }
 
 void umbelt_ble_start_adv(BLEInterface *ble)
