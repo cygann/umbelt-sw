@@ -1,6 +1,13 @@
 #include <haptics.h>
 // #include <NRF52TimerInterrupt.h>
 
+void run_haptics(pulse* p, int num_cycles/*, int motors[]*/) {
+  for (int i = 0; i < num_cycles; i++) { // number of cycles to do total pattern
+    for (size_t j = 0; j < sizeof(p)/sizeof(p[0]); j++) {
+      actuate_by_freq(0, p[j].dur, 0.85, p[j].freq);
+    }
+  }
+}
 void
 init_haptics() {
   // Initialize Motor Pins
@@ -10,6 +17,29 @@ init_haptics() {
     digitalWrite(MOTOR_PINS[i] + EN_OFFSET, LOW);
     pinMode(MOTOR_PINS[i], OUTPUT);
   }
+}
+
+/* Vibrates specified motors for given intensity and duration.
+ *
+ * @param motor_pin	specified motor to vibrate
+ * @param duration	length time of vibration in ms
+ * @param percent_motor percent of haptic vibration capacity to vibrate at,
+ * 			not to exceed 0.85
+ */
+void actuate_by_freq(int motor_pin, int duration, double percent_motor, int frequency) {
+  digitalWrite(MOTOR_PINS[motor_pin] + EN_OFFSET, HIGH);  // enable
+  if (percent_motor > 0.85) {
+    Serial.println("Motor percentage above 85%. Using 85%");
+    percent_motor = 0.85;
+  }
+  int numCycles = duration / (frequency * 2);
+  for (int j = 0; j < numCycles; j++) {  // do J_MAX * TODAL_DELAY = 16 * 6 = 96ms of vibration
+    analogWrite(MOTOR_PINS[motor_pin], 512 + percent_motor * 512);
+    delay(frequency);
+    analogWrite(MOTOR_PINS[motor_pin], 512 - percent_motor * 512);
+    delay(frequency);
+  }
+  digitalWrite(MOTOR_PINS[motor_pin] + EN_OFFSET, LOW);  // disable
 }
 
 /* Vibrates specified motors for given intensity and duration.

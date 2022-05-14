@@ -29,6 +29,22 @@ extern uint8_t packetbuffer[];
 // void set_battery_led();
 void init_indicator_led();
 
+// TODO add this to header file or some cleaner place eventually
+float noteFrequencies[9] {110, 123, 131, 147, 165, 175, 196, 220, 247}; // A2 --> B3
+
+pulse jackhammer[4] = {
+  {150, 10},
+  {0, 10},
+  {150, 10},
+  {0, 10},
+};
+
+pulse maryHadALittleLamb [10] = {
+  {noteFrequencies[4], 100},
+  {noteFrequencies[3], 100},
+  {noteFrequencies[2], 100},
+};
+
 void
 setup () {
     rtt.println(" ======== Umbelt =====|=[] ");
@@ -49,10 +65,16 @@ setup () {
 
 void
 loop () {
+<<<<<<< Updated upstream
+    run_haptics(jackhammer, 10);
+=======
     // haptics_test();
-    compass.compass_update();
+    // compass.compass_update();
     // magneto.read();
-    delay(100);
+    // delay(100);
+    actuate_motor(0, 120, 0.3);
+    delay(1000);
+>>>>>>> Stashed changes
 }
 
 void
