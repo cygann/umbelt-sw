@@ -3,10 +3,10 @@
 #include <Adafruit_LSM6DS33.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_NeoPixel.h>
-#include <RTTStream.h>
 
 /* Umbelt library code */
 #include "umbelt_ble.h"
+#include "umbelt_common.h"
 #include "haptics.h"
 #include "compass.h"
 #include "clock.h"
@@ -29,11 +29,9 @@ extern uint8_t packetbuffer[];
 // void set_battery_led();
 void init_indicator_led();
 
-static RTTStream rtt;
-
 void
 setup () {
-    rtt.println(" ======== Welcome to Umbelt =====|=[] ");
+    rtt.println(" ======== Umbelt =====|=[] ");
     // Serial.begin(9600);
     // Serial.println("Umbelt demo");
 
