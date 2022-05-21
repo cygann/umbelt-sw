@@ -36,3 +36,18 @@ After soldering on components, it's useful to check the soldering of the motor d
 4. Upload the motor testing program with `pio run -t upload -e motortest`.
 5. Use a multimeter in DC voltage mode to probe each thin pad on the high density flex connector with the other probe on GND. Check that each motor output swings a from 0 to 3.3V. If any outputs don't do this then the soldering of the corresponding motor driver probably needs to be fixed.
 
+## Debug output
+
+For debug outputs, we strongly recommend using a jlink debug probe with RTT (Real Time Transfer) instead of Arduino's
+Serial library.
+
+1. Install [JLink Commander](https://www.segger.com/downloads/jlink/) software.
+
+2. Plug in a Segger JLink debug probe to your computer and connect the debug pins to the Umbelt board.
+
+3. In a terminal, run `Jlinkexe -autoconnect 1 -Device NRF52840_XXAA -If SWD -Speed 400`. This establishes a connection to the target chip on the Umbelt board through the Jlink debug probe.
+
+4. In another terminal window, run `JLinkRTTClient` to view the debug outputs.
+
+[TODO] On the Umblet firmware side, write to RTT with the following:
+

@@ -3,10 +3,10 @@
 #include <Adafruit_LSM6DS33.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_NeoPixel.h>
-#include <bluefruit.h>
 
 /* Umbelt library code */
-#include "bluetooth.h"
+#include "umbelt_ble.h"
+#include "umbelt_common.h"
 #include "haptics.h"
 #include "compass.h"
 #include "clock.h"
@@ -31,7 +31,7 @@ void init_indicator_led();
 
 void
 setup () {
-
+    rtt.println(" ======== Umbelt =====|=[] ");
     // Serial.begin(9600);
     // Serial.println("Umbelt demo");
 
@@ -44,6 +44,7 @@ setup () {
     // Serial.println("This is Umbelt");
     // magneto = MMC5633();
     compass = Compass();
+
 }
 
 void
