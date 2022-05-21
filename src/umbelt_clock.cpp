@@ -1,6 +1,6 @@
 #include <Adafruit_LIS3MDL.h>
-#include <haptics.h>
-#include <clock.h>
+#include <umbelt_haptics.h>
+#include <umbelt_clock.h>
 
 void
 clock_test() {

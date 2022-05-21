@@ -1,7 +1,7 @@
 #include <bluefruit.h>
 
 #include <umbelt_ble.h>
-#include <haptics.h>
+#include <umbelt_haptics.h>
 
 void
 umbelt_ble_init(BLEInterface *ble) {
