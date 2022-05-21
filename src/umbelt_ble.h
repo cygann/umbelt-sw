@@ -10,6 +10,8 @@ struct BLEInterface {
     BLEUart bleuart;
 };
 
-void umbelt_ble_init(BLEInterface *ble);
+void umbelt_ble_init();
 
-void umbelt_ble_start_adv(BLEInterface *ble);
+void umbelt_ble_start_adv();
+
+void umbelt_ble_read();
