@@ -6,8 +6,9 @@
 
 static BLEInterface s_ble;
 
-void
-umbelt_ble_init() {
+static uint8_t packet_buffer[BLEUART_BUF_SIZE];
+
+void umbelt_ble_init() {
 
   // while (!Serial) delay(10);
   rtt.println("Bluetooth init");
@@ -23,8 +24,7 @@ umbelt_ble_init() {
   rtt.println("Advertise begin");
 }
 
-void umbelt_ble_start_adv()
-{
+void umbelt_ble_start_adv() {
   // Advertising packet
   Bluefruit.Advertising.addFlags(BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE);
   Bluefruit.Advertising.addTxPower();
@@ -52,5 +52,55 @@ void umbelt_ble_start_adv()
 }
 
 void umbelt_ble_read() {
+  uint8_t len = read_bleuart_packet(&(s_ble.bleuart), 500);
+  if (len == 0) return;
+}
 
+uint8_t read_bleuart_packet(BLEUart *ble_uart, uint16_t read_timeout) {
+  uint16_t timeout = read_timeout;
+  uint16_t idx = 0;
+
+  memset(packet_buffer, 0, BLEUART_BUF_SIZE);
+
+  int packet_size = -1;
+
+  while (timeout--) {
+    if (idx >= BLEUART_BUF_SIZE) break;
+    if (idx == packet_size) break;
+
+    while (ble_uart->available()) {
+      char c =  ble_uart->read();
+      if (c == '!') {
+        idx = 0;
+      }
+      if (idx == 1) {
+          packet_size = c;
+          rtt.print(" Packet size: ");
+          rtt.print(packet_size);
+          rtt.print("  ");
+      }
+
+      rtt.print(idx);
+      rtt.print(" ");
+      rtt.println(c);
+
+      packet_buffer[idx] = c;
+      idx++;
+      timeout = read_timeout;
+    }
+
+    if (timeout == 0) break;
+    delay(1);
+  }
+
+  packet_buffer[idx] = 0;  // null term
+
+  // no data or timeout
+  if (!idx) return 0;
+
+  // doesn't start with '!' packet beginning
+  if (packet_buffer[0] != '!') return 0;
+
+  // Return number of characters we've read.
+  return idx;
 }
