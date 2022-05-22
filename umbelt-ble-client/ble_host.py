@@ -40,35 +40,13 @@ def input_command():
     command_str = func()
     return command_str
 
-def compute_checksum(s):
-    """
-    Computes checksum fromt the input string s. This is done by summing the char
-    values in the string and flipping the bits. The resulting checksum should
-    only be 1 byte, so overflow is simulated here.
-
-    Inputs:
-        - s : input string for which a checksum should be computed
-    Outputs:
-        - checksum of the presented string
-    """
-    # Compute checksum
-    char_list = [ord(c) for c in s]
-    xsum = sum(char_list)
-    xsum = xsum & 0xFF  # bitwise AND with 0xFF to simulate overflow.
-    xsum = xsum ^ 0xFF
-
-    return xsum
-
-def print_packet_debug(command_str, n_bytes, cmd, xsum, cmd_rdy, encoded):
+def print_packet_debug(command_str, n_bytes, cmd, encoded):
 
     print('----- PACKET DEBUG -------')
     print('[Raw Command string]:' + command_str)
     print('[Command string with header]:' + cmd)
 
-    print('[Checksum value:]' + str(xsum))
-    print('[Checksum char val:]' + chr(xsum))
-
-    cmd_arr = [c for c in cmd_rdy]
+    cmd_arr = [c for c in cmd]
     print('[Length of the command array:' + str(len(cmd_arr)))
     print('[Command array]:')
     print(cmd_arr)
@@ -118,13 +96,8 @@ def main():
                 #   - 1 byte for the checksum
                 cmd = '!' + chr(n_bytes + 3) + command_str
 
-                # Compute checksum and append it to cmd to get the finished
-                # command.
-                xsum = compute_checksum(cmd)
-                cmd_rdy = cmd + chr(xsum)
-
-                encoded = encode_str(cmd_rdy)
-                print_packet_debug(command_str, n_bytes, cmd, xsum, cmd_rdy,
+                encoded = encode_str(cmd)
+                print_packet_debug(command_str, n_bytes, cmd, xsum, cmd,
                         encoded)
 
                 # Send to device
