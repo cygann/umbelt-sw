@@ -73,9 +73,7 @@ def main():
         if not uart_connection:
             print("Trying to connect...")
             for adv in ble.start_scan(ProvideServicesAdvertisement):
-                print(adv)
                 if UARTService in adv.services:
-                    print("Trying to connect")
                     uart_connection = ble.connect(adv)
                     print("Connected")
                     break
