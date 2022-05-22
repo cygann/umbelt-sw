@@ -8,7 +8,7 @@ def current_time():
     now = datetime.datetime.now()
 
     hour = now.hour % 12
-    if hour is 0: hour = 12
+    if hour == 0: hour = 12
 
     minute = now.minute
     second = now.second

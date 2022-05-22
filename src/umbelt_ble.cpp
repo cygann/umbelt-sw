@@ -20,6 +20,8 @@ void umbelt_ble_init() {
   s_ble.bleuart.begin();
   rtt.println("BLE UART begin");
 
+  Bluefruit.setName("Umbelt");
+
   umbelt_ble_start_adv();
   rtt.println("Advertise begin");
 }
@@ -49,6 +51,7 @@ void umbelt_ble_start_adv() {
   Bluefruit.Advertising.setInterval(32, 244);    // in unit of 0.625 ms
   Bluefruit.Advertising.setFastTimeout(30);      // number of seconds in fast mode
   Bluefruit.Advertising.start(0);                // 0 = Don't stop advertising after n seconds
+  rtt.println("Advertise begin");
 }
 
 void umbelt_ble_read() {

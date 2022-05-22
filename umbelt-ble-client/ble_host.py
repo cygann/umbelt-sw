@@ -16,7 +16,7 @@ uart_connection = None
 def input_command():
     """
     Handles user input for command selection.
-    Outputs: 
+    Outputs:
         - The umbelt command as a string (without any UART-protocol specific
           parts such as the checksum)
     """
@@ -37,16 +37,16 @@ def input_command():
         if func is None:
             print("Invalid command. Use 'X' to type a custom command.\n")
 
-    command_str = func() 
+    command_str = func()
     return command_str
 
 def compute_checksum(s):
     """
     Computes checksum fromt the input string s. This is done by summing the char
     values in the string and flipping the bits. The resulting checksum should
-    only be 1 byte, so overflow is simulated here. 
+    only be 1 byte, so overflow is simulated here.
 
-    Inputs: 
+    Inputs:
         - s : input string for which a checksum should be computed
     Outputs:
         - checksum of the presented string
@@ -95,7 +95,9 @@ def main():
         if not uart_connection:
             print("Trying to connect...")
             for adv in ble.start_scan(ProvideServicesAdvertisement):
+                print(adv)
                 if UARTService in adv.services:
+                    print("Trying to connect")
                     uart_connection = ble.connect(adv)
                     print("Connected")
                     break
@@ -109,7 +111,7 @@ def main():
 
                 # Compute length of the raw command str
                 n_bytes = len(command_str)
-                
+
                 # Prepend '!' and command len + 3 as the packet header:
                 #   - 1 byte for '!'
                 #   - 1 byte for len itself
@@ -119,7 +121,7 @@ def main():
                 # Compute checksum and append it to cmd to get the finished
                 # command.
                 xsum = compute_checksum(cmd)
-                cmd_rdy = cmd + chr(xsum) 
+                cmd_rdy = cmd + chr(xsum)
 
                 encoded = encode_str(cmd_rdy)
                 print_packet_debug(command_str, n_bytes, cmd, xsum, cmd_rdy,
