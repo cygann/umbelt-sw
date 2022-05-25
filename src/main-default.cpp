@@ -8,6 +8,7 @@
 #include "umbelt_ble.h"
 #include "umbelt_common.h"
 #include "haptics.h"
+#include <haptic_patterns.h>
 #include "compass.h"
 #include "clock.h"
 #include "CommandLine.h"
@@ -50,8 +51,9 @@ setup () {
 }
 
 void
-loop () {
-    run_haptics(bach, 32, 10);
+loop () {    
+    run_haptics(bach, /*num_pulses=*/32, /*motor_idx=*/0, /*intensity=*/0.85);
+
     // compass.compass_update()s;
     // magneto.read();
     // delay(100);

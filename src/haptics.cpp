@@ -1,4 +1,7 @@
 #include <haptics.h>
+#define MICROSECONDS_PER_SECOND 1000000
+#define ANALOG_SCALE 512
+#define HALF_PERIOD 3
 // #include <NRF52TimerInterrupt.h>
 
 void
@@ -14,13 +17,13 @@ init_haptics() {
 
 /* Vibrates specified motors for given frequency.
  *
- * @param motor_pin	    specified motor to vibrate
+ * @param motor_idx	    specified motor to vibrate
  * @param duration	    length time of vibration in ms
- * @param percent_motor percent of haptic vibration capacity to vibrate at,
- * 			                not to exceed 0.85
+ * @param percent_motor percent of haptic vibration capacity to vibrate at
  * @param frequency     frequency of vibration (Hz)
  */
-void actuate_hz(int motor_pin, int duration, double percent_motor, float frequency) {
+void actuate_hz(int motor_idx, int duration, double percent_motor, float frequency) {
+  percent_motor = percent_motor * 0.85;
   if (percent_motor > 0.85) {
     Serial.println("Motor percentage above 85%. Using 85%");
     percent_motor = 0.85;
@@ -33,53 +36,58 @@ void actuate_hz(int motor_pin, int duration, double percent_motor, float frequen
   
   float half_period = 1 / (frequency * 2);
   int num_cycles = duration / (2 * half_period * 1000);
-  digitalWrite(MOTOR_PINS[motor_pin] + EN_OFFSET, HIGH);  // enable
+  digitalWrite(MOTOR_PINS[motor_idx] + EN_OFFSET, HIGH);  // enable
 
   for (int j = 0; j < num_cycles; j++) {
-    analogWrite(MOTOR_PINS[motor_pin], 512 + percent_motor * 512);
-    delayMicroseconds(half_period * 1000000);
-    analogWrite(MOTOR_PINS[motor_pin], 512 - percent_motor * 512);
+    analogWrite(MOTOR_PINS[motor_idx], 512 + percent_motor * 512);
+    delayMicroseconds(half_period * MICROSECONDS_PER_SECOND);
+    analogWrite(MOTOR_PINS[motor_idx], 512 - percent_motor * 512);
     delayMicroseconds(half_period * 1000000);
   }
-  analogWrite(MOTOR_PINS[motor_pin], 512 + percent_motor * 512);
+  analogWrite(MOTOR_PINS[motor_idx], 512 + percent_motor * 512);
   delayMicroseconds(half_period / 2 * 1000000);
-  analogWrite(MOTOR_PINS[motor_pin], 512);
-  digitalWrite(MOTOR_PINS[motor_pin] + EN_OFFSET, LOW);  // disable
+  analogWrite(MOTOR_PINS[motor_idx], 512);
+  digitalWrite(MOTOR_PINS[motor_idx] + EN_OFFSET, LOW);  // disable
 }
 
 /* Vibrates specified motors for given intensity and duration.
  *
- * @param motor_pin	specified motor to vibrate
+ * @param motor_idx	specified motor to vibrate
  * @param duration	length time of vibration in ms
  * @param percent_motor percent of haptic vibration capacity to vibrate at,
- * 			not to exceed 0.85
  */
-void actuate_motor(int motor_pin, int duration, double percent_motor) {
-  digitalWrite(MOTOR_PINS[motor_pin] + EN_OFFSET, HIGH);  // enable
-  int half_period = 3;
+void actuate_motor(int motor_idx, int duration, double percent_motor) {
+  digitalWrite(MOTOR_PINS[motor_idx] + EN_OFFSET, HIGH);  // enable
+  percent_motor = percent_motor * 0.85;
   if (percent_motor > 0.85) {
     Serial.println("Motor percentage above 85%. Using 85%");
     percent_motor = 0.85;
   }
   percent_motor = 1;
-  int numCycles = duration / (half_period * 2);
+  int numCycles = duration / (HALF_PERIOD * 2);
   for (int j = 0; j < numCycles; j++) {  // do J_MAX * TODAL_DELAY = 16 * 6 = 96ms of vibration
-    analogWrite(MOTOR_PINS[motor_pin], 512 + percent_motor * 512);
-    delayMicroseconds(half_period * 1000);
-    analogWrite(MOTOR_PINS[motor_pin], 512 - percent_motor * 512);
-    delayMicroseconds(half_period * 1000);
+    analogWrite(MOTOR_PINS[motor_idx], ANALOG_SCALE + percent_motor * ANALOG_SCALE);
+    delayMicroseconds(HALF_PERIOD * 1000);
+    analogWrite(MOTOR_PINS[motor_idx], ANALOG_SCALE - percent_motor * ANALOG_SCALE);
+    delayMicroseconds(HALF_PERIOD * 1000);
   }
-  analogWrite(MOTOR_PINS[motor_pin], 512);
-  digitalWrite(MOTOR_PINS[motor_pin] + EN_OFFSET, LOW);  // disable
+  analogWrite(MOTOR_PINS[motor_idx], ANALOG_SCALE);
+  digitalWrite(MOTOR_PINS[motor_idx] + EN_OFFSET, LOW);  // disable
 }
 
-
-void run_haptics(pulse* p, int num_pulses, int num_cycles/*, int motors[]*/) {
-  for (int i = 0; i < num_cycles; i++) { // number of cycles to do total pattern
-    for (int j = 0; j < num_pulses; j++) {
-      actuate_hz(0, p[j].dur, 0.85, p[j].freq);
-    }
+/* Vibrates selected motor for given pulse pattern. A pulse pattern array
+ * consists of the duration and frequency of each pulse.
+ *
+ * @param motor_idx	      specified motor to vibrate
+ * @param p	              array of pulse pattern
+ * @param num_pulses	    number of pulses in array
+ * @param intensity        intensity of vibration
+ */
+void run_haptics(pulse* p, int num_pulses, int motor_idx, double intensity) {
+  for (int j = 0; j < num_pulses; j++) {
+    actuate_hz( motor_idx, p[j].dur, intensity, p[j].freq);
   }
+  
 }
 
 /* Test & debug functions */
