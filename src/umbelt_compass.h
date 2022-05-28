@@ -17,7 +17,8 @@ const float Z_OFFSET = 0;
 
 const float UPDATE_DUR = 200; // Time to for update haptics to persist, in ms
 
-const float DEFAULT_UPDATE_THRESHOLD = 15; // In degrees, heading threshold required for new haptic update.
+const float DEFAULT_UPDATE_THRESHOLD = 15; // In degrees, heading threshold
+                                           // required for new haptic update.
 
 
 /* Initializes the compass module by setting up magnetometer and enabling the
