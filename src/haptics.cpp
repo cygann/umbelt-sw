@@ -23,11 +23,12 @@ init_haptics() {
  * @param frequency     frequency of vibration (Hz)
  */
 void actuate_hz(int motor_idx, int duration, double percent_motor, float frequency) {
-  percent_motor = percent_motor * 0.85;
-  if (percent_motor > 0.85) {
-    Serial.println("Motor percentage above 85%. Using 85%");
-    percent_motor = 0.85;
+  if (percent_motor > 1 || percent_motor < 0) {
+    Serial.println("Motor percentage out of bounds. Using 100%");
+    percent_motor = 1;
   }
+
+  percent_motor = percent_motor * 0.85;
 
   if (frequency == 0) {
     delayMicroseconds(duration * 1000);
@@ -58,12 +59,12 @@ void actuate_hz(int motor_idx, int duration, double percent_motor, float frequen
  */
 void actuate_motor(int motor_idx, int duration, double percent_motor) {
   digitalWrite(MOTOR_PINS[motor_idx] + EN_OFFSET, HIGH);  // enable
-  percent_motor = percent_motor * 0.85;
-  if (percent_motor > 0.85) {
-    Serial.println("Motor percentage above 85%. Using 85%");
-    percent_motor = 0.85;
+  if (percent_motor > 1 || percent_motor < 0) {
+    Serial.println("Motor percentage out of bounds. Using 100%");
+    percent_motor = 1;
   }
-  percent_motor = 1;
+  percent_motor = percent_motor * 0.85;
+
   int numCycles = duration / (HALF_PERIOD * 2);
   for (int j = 0; j < numCycles; j++) {  // do J_MAX * TODAL_DELAY = 16 * 6 = 96ms of vibration
     analogWrite(MOTOR_PINS[motor_idx], ANALOG_SCALE + percent_motor * ANALOG_SCALE);
