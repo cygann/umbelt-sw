@@ -1,4 +1,5 @@
-#include <haptics.h>
+#include <umbelt_haptics.h>
+
 #define MICROSECONDS_PER_SECOND 1000000
 #define ANALOG_SCALE 512
 #define HALF_PERIOD 3
@@ -34,7 +35,7 @@ void actuate_hz(int motor_idx, int duration, double percent_motor, float frequen
     delayMicroseconds(duration * 1000);
     return;
   }
-  
+
   float half_period = 1 / (frequency * 2);
   int num_cycles = duration / (2 * half_period * 1000);
   digitalWrite(MOTOR_PINS[motor_idx] + EN_OFFSET, HIGH);  // enable
@@ -88,7 +89,7 @@ void run_haptics(pulse* p, int num_pulses, int motor_idx, double intensity) {
   for (int j = 0; j < num_pulses; j++) {
     actuate_hz( motor_idx, p[j].dur, intensity, p[j].freq);
   }
-  
+
 }
 
 /* Test & debug functions */

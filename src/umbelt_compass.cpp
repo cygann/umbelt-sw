@@ -1,5 +1,5 @@
-#include <compass.h>
-#include <haptics.h>
+#include <umbelt_compass.h>
+#include <umbelt_haptics.h>
 #include <mmc5633.h>
 
 /* Initializes the compass struct object by begining I2C on the magnetometer and
