@@ -18,36 +18,25 @@
 #define BAT_PIN 20
 #define DEFAULT_TEST_CYCLES 2
 
+#define UMBELT_COMPASS_ENABLE true
+
 Adafruit_NeoPixel pixels(1, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 
 BLEInterface ble;
-Compass compass;
-
-MMC5633 magneto;
 
 extern uint8_t packetbuffer[];
 
 // void set_battery_led();
 void init_indicator_led();
 
-
-
 void
 setup () {
     rtt.println(" ======== Umbelt =====|=[] ");
-    // Serial.begin(9600);
-    // Serial.println("Umbelt demo");
 
     // Init umbelt modules
     init_haptics();
     init_indicator_led();
-
-    // while (!Serial) {}
-    delay(1000); // For some reason, this is critical for Serial (?)
-    // Serial.println("This is Umbelt");
-    // magneto = MMC5633();
-    compass = Compass();
-
+    umbelt_compass_init(UMBELT_COMPASS_ENABLE);
 }
 
 void
