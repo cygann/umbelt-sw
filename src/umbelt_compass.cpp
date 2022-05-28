@@ -15,6 +15,7 @@
  * last_update_motor : Previous motor that was vibrated.
  * last_update_time : Time in ms since last haptic update.
  * magnetic_{x, y, z} : Current magnetometer readings for x, y, z coords.
+ * update_threshold : In degrees, threshold for a haptic update.
  */
 typedef struct umbelt_compass {
     bool          enabled;
@@ -26,6 +27,7 @@ typedef struct umbelt_compass {
     int           magnetic_x;
     int           magnetic_y;
     int           magnetic_z;
+    float         update_threshold;
 } umbelt_compass;
 
 // Instance of this module.
@@ -62,6 +64,7 @@ void umbelt_compass_init(bool enable_compass) {
   s_compass.last_update_heading = 0;
   s_compass.last_update_time = 0;
   s_compass.last_update_motor = 0;
+  s_compass.update_threshold = DEFAULT_UPDATE_THRESHOLD;
 
   s_compass.enabled = enable_compass;
 
@@ -83,7 +86,7 @@ void umbelt_compass_tick(void) {
     resolve_heading();
 
     // Ensure the change in heading is significant enough to warrant haptics.
-    if (!heading_change_greater_than(15)) return;
+    if (!heading_change_greater_than(s_compass.update_threshold)) return;
     int bin = 13 - (s_compass.heading * N_MOTORS) / 360;
 
     actuate_motor(bin, /*duration=*/ 80 /*ms*/, /*percent_motor=*/1);
