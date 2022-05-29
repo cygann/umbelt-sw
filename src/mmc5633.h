@@ -1,8 +1,7 @@
 #ifndef MMC5633_H
 #define MMC5633_H
 
-#include "Arduino.h"
-// #include <Wire.h>
+#include <Arduino.h>
 
 /* ================================= */
 /*     I2C Addresses, registers      */
@@ -32,25 +31,31 @@
 // and Auto_SR_en (enable auto set/reset) high
 #define MMC5633_BYTE_READ 0b00100001
 
-struct mag_reading {
-    int16_t mag_x;
-    int16_t mag_y;
-    int16_t mag_z;
-    unsigned long time; // Timestamp of reading
-};
+typedef struct mag_reading {
+  int16_t mag_x;
+  int16_t mag_y;
+  int16_t mag_z;
+  unsigned long time; // Timestamp of reading
+} mag_reading;
 
-class MMC5633 {
-    public:
-        MMC5633(void);
-        bool get_reading(mag_reading *reading);
-        void set_continuous_mode();
-        bool read(mag_reading *reading);
-        bool motion_detected();
-    private:
-        void read_from_reg(uint8_t reg, uint8_t num_bytes);
+/* Initializes the mmc5633 magnetometer module.
+ */
+void init_mmc5633(void);
 
-        bool continuous_mode;
+/* Obtain an x, y, z magnetic field measurement from the sensor.
+ *
+ * @param reading : Pointer to mag_reading struct that will hold the result.
+ *
+ * @return True on success, false otherwise.
+ */
+bool mmc5633_get_reading(mag_reading *reading);
 
-};
+/* Poll the magnetometer for movement detection and see whether movement was
+ * flagged. Does not ever seem to actually flag motion.
+ * TODO: Look into this?
+ *
+ * @return True if movement detected, false otherwise.
+ */
+bool motion_detected(void);
 
 #endif
