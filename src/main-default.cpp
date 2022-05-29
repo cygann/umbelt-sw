@@ -16,9 +16,10 @@ void setup(void) {
     rtt.println(" ======== Umbelt =====|=[] ");
 
     // Init umbelt modules
-    init_haptics();
-    init_indicator_led();
+    umbelt_haptics_init();
     umbelt_compass_init(UMBELT_COMPASS_ENABLE);
+
+    init_indicator_led();
 }
 
 void loop(void) {

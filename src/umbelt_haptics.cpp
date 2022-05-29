@@ -1,12 +1,11 @@
-#include <umbelt_haptics.h>
+#include "umbelt_haptics.h"
 
 #define MICROSECONDS_PER_SECOND 1000000
 #define ANALOG_SCALE 512
 #define HALF_PERIOD 3
 // #include <NRF52TimerInterrupt.h>
 
-void
-init_haptics() {
+void umbelt_haptics_init(void) {
   // Initialize Motor Pins
   for (int i = 0; i < N_MOTORS; i++) {
     // Setup EN pin and set to low

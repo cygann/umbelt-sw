@@ -2,8 +2,8 @@
  *  Contains functions for acuating and stopping haptic motors on the belt.
  */
 
-#include <Adafruit_LIS3MDL.h>
-#include "Arduino.h"
+#include <Arduino.h>
+
 #define RESONANT_FREQ 170 // in Hz
 
 const int N_MOTORS = 13;
@@ -25,7 +25,7 @@ typedef struct repeat_pulse {
   int repeat_num;
 } repeat_pulse;
 
-void init_haptics();
+void umbelt_haptics_init(void);
 
 /* --------- Test & Debug functions ---------- */
 void haptics_test();
