@@ -1,29 +1,65 @@
 #include <bluefruit.h>
-#include <umbelt_common.h>
 
-#include <umbelt_ble.h>
-#include <umbelt_haptics.h>
+#include "umbelt_common.h"
+#include "umbelt_ble.h"
+#include "umbelt_haptics.h"
 
-static BLEInterface s_ble;
 
 static uint8_t packet_buffer[BLEUART_BUF_SIZE];
 
+// Struc that represents an instance of this module.
+typedef struct umbelt_ble {
+  bool connected;
+  BLEInterface ble;
+} umbelt_ble;
+
+static umbelt_ble s_umbelt_ble;
+
+/* Callback for event handler. */
+void umbelt_ble_evt_handler(ble_evt_t* evt);
+
 void umbelt_ble_init() {
 
-  // while (!Serial) delay(10);
+  // Initialize instance of module
+  memset(&s_umbelt_ble, 0, sizeof(s_umbelt_ble));
   rtt.println("Bluetooth init");
 
   Bluefruit.begin();
   Bluefruit.setTxPower(4);    // Check bluefruit.h for supported values
+  Bluefruit.setName("Umbelt");
   rtt.println("Bluetooth init'd");
 
-  s_ble.bleuart.begin();
+  // Set connect/disconnect callbacks.
+  Bluefruit.setEventCallback(&umbelt_ble_evt_handler);
+
+  // Start UART service
+  s_umbelt_ble.ble.bleuart.begin();
   rtt.println("BLE UART begin");
 
-  Bluefruit.setName("Umbelt");
-
+  // Start advertising.
   umbelt_ble_start_adv();
   rtt.println("Advertise begin");
+}
+
+void umbelt_ble_evt_handler(ble_evt_t* evt) {
+  int evt_id = evt->header.evt_id;
+
+  switch(evt_id) {
+
+    case BLE_GAP_EVT_CONNECTED:
+      s_umbelt_ble.connected = true;
+      rtt.println("Connected!");
+      break;
+
+    case BLE_GAP_EVT_DISCONNECTED:
+      s_umbelt_ble.connected = false;
+      rtt.println("Disconnected!");
+      break;
+
+    default:
+      break;
+  }
+
 }
 
 void umbelt_ble_start_adv() {
@@ -32,7 +68,7 @@ void umbelt_ble_start_adv() {
   Bluefruit.Advertising.addTxPower();
 
   // Include the BLE UART (AKA 'NUS') 128-bit UUID
-  Bluefruit.Advertising.addService(s_ble.bleuart);
+  Bluefruit.Advertising.addService(s_umbelt_ble.ble.bleuart);
 
   // Secondary Scan Response packet (optional)
   // Since there is no room for 'Name' in Advertising packet
@@ -54,8 +90,8 @@ void umbelt_ble_start_adv() {
   rtt.println("Advertise begin");
 }
 
-void umbelt_ble_read() {
-  uint8_t len = read_bleuart_packet(&(s_ble.bleuart), 500);
+void umbelt_ble_tick() {
+  uint8_t len = read_bleuart_packet(&(s_umbelt_ble.ble.bleuart), /*timeout=*/500);
   if (len == 0) return;
 }
 

@@ -2,7 +2,7 @@
 #include <string.h>
 #include "Arduino.h"
 
-#define BLEUART_BUF_SIZE (20)
+#define BLEUART_BUF_SIZE (32)
 
 struct BLEInterface {
     // OTA DFU service
@@ -15,7 +15,7 @@ struct BLEInterface {
 void umbelt_ble_init();
 void umbelt_ble_start_adv();
 
-void umbelt_ble_read();
+void umbelt_ble_tick();
 
 /* Reads from the incoming blueart datastream and puts data into packet buffer.
  *
