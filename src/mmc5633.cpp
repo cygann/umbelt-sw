@@ -1,46 +1,47 @@
-#include "MMC5633.h"
 #include <Wire.h>
 
-MMC5633::MMC5633() {
-    // Serial.println("init'ing MMC5633");
-    // Serial.println("init'ing MMC5633");
-    continuous_mode = false;
-}
+#include "MMC5633.h"
 
-bool
-MMC5633::get_reading(mag_reading *reading) {
-    return false;
-}
+/* Struct to represent an instance of this module.
+ *
+ * continuous_mode : Whether the sensor is in continous measurement mode.
+ */
+typedef struct mmc5633 {
+  bool continuous_mode;
+} mmc5633;
 
-void
-MMC5633::set_continuous_mode() {
-    return;
-}
+// Instance of this module.
+static mmc5633 s_mmc5633;
+
+
+/* Sets whether continous measurement mode should be enabled on the sensor.
+ *
+ * @param continuous : Whether continous mode should be set.
+ */
+void set_continuous_mode(bool continous);
 
 /* Initiates a read of NUM_BYTES from the MMC5633 at a particular register.
  * Calling function should use Wire.read() to read out the bytes.
+ *
+ * TODO: probably just make this read the bytes into a buffer.
+ *
+ * @param reg : Register address to read from.
+ * @param num_bytes : Number of bytes to read.
  */
-void
-MMC5633::read_from_reg(uint8_t reg, uint8_t num_bytes) {
-    Wire.beginTransmission(MMC5633_I2C_ADDR);
-    Wire.write(reg);
-    Wire.endTransmission(); // false for repeated start
-    Wire.requestFrom(MMC5633_I2C_ADDR, num_bytes);
+void read_from_reg(uint8_t reg, uint8_t num_bytes);
+
+
+void init_mmc5633(void) {
+  memset(&s_mmc5633, 0, sizeof(mmc5633));
+  s_mmc5633.continuous_mode = false;
 }
 
-/* Does not ever seem to actually flag motion. */
-bool
-MMC5633::motion_detected() {
-    read_from_reg(MMC5633_REG_STATUS_1, 1);
-    return Wire.read() & MMC5633_MOTION_DETECTED;
-}
+bool mmc5633_get_reading(mag_reading *reading) {
 
-bool
-MMC5633::read(mag_reading *reading) {
     Wire.begin();
 
-    // If not continous mode, we must first check if reading is ready
-    if (!this->continuous_mode) {
+    // If not continous mode, we must first check if reading is ready.
+    if (!s_mmc5633.continuous_mode) {
         Wire.beginTransmission(MMC5633_I2C_ADDR);
         Wire.write(MMC5633_REG_CTRL_0);
         Wire.write(MMC5633_BYTE_READ);
@@ -112,3 +113,20 @@ MMC5633::read(mag_reading *reading) {
     // CMM freq en set to 1
     return true;
 }
+
+void mmc5633_set_continous_mode(bool continous) {
+  // TODO implement this.
+}
+
+void read_from_reg(uint8_t reg, uint8_t num_bytes) {
+    Wire.beginTransmission(MMC5633_I2C_ADDR);
+    Wire.write(reg);
+    Wire.endTransmission(); // false for repeated start
+    Wire.requestFrom(MMC5633_I2C_ADDR, num_bytes);
+}
+
+bool motion_detected(void) {
+    read_from_reg(MMC5633_REG_STATUS_1, 1);
+    return Wire.read() & MMC5633_MOTION_DETECTED;
+}
+

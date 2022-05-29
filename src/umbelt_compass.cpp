@@ -9,7 +9,6 @@
  * and gyroscope devices.
  *
  * enabled : Whether the compass module is enabled.
- * magneto : Handle to magnetometer object.
  * heading : Current heading, in degrees.
  * last_update_heading : Previous heading that was vibrated.
  * last_update_motor : Previous motor that was vibrated.
@@ -19,7 +18,6 @@
  */
 typedef struct umbelt_compass {
     bool          enabled;
-    MMC5633       magneto;
     float         heading;
     float         last_update_heading;
     int           last_update_motor;
@@ -59,7 +57,9 @@ void umbelt_compass_init(bool enable_compass) {
   // Init compass module struct
   memset(&s_compass, 0, sizeof(umbelt_compass));
 
-  s_compass.magneto = MMC5633();
+  // Init magnetometer module.
+  init_mmc5633();
+
   s_compass.heading = 0;
   s_compass.last_update_heading = 0;
   s_compass.last_update_time = 0;
@@ -115,7 +115,7 @@ void resolve_heading(void) {
     // measurements to denoise.
     for (int i = 0; i < SAMPLING_N; i++) {
         mag_reading reading;
-        bool success = s_compass.magneto.read(&reading);
+        bool success = mmc5633_get_reading(&reading);
         mag_x += reading.mag_x;
         mag_y += reading.mag_y;
         mag_z += reading.mag_z;

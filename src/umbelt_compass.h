@@ -1,11 +1,6 @@
 /*  Umbelt Compass module.
  *  ----------------------
- *
- *  TODO: change this abstraction where magnetometer and gyro sensors are not
- *  stuck inside compass such that they could be used for other features.
  */
-
-#include "mmc5633.h"
 
 const float Pi = 3.14159;
 
