@@ -15,13 +15,6 @@ void umbelt_haptics_init(void) {
   }
 }
 
-/* Vibrates specified motors for given frequency.
- *
- * @param motor_idx	    specified motor to vibrate
- * @param duration	    length time of vibration in ms
- * @param percent_motor percent of haptic vibration capacity to vibrate at
- * @param frequency     frequency of vibration (Hz)
- */
 void actuate_hz(int motor_idx, int duration, double percent_motor, float frequency) {
   if (percent_motor > 1 || percent_motor < 0) {
     Serial.println("Motor percentage out of bounds. Using 100%");
@@ -51,12 +44,6 @@ void actuate_hz(int motor_idx, int duration, double percent_motor, float frequen
   digitalWrite(MOTOR_PINS[motor_idx] + EN_OFFSET, LOW);  // disable
 }
 
-/* Vibrates specified motors for given intensity and duration.
- *
- * @param motor_idx	specified motor to vibrate
- * @param duration	length time of vibration in ms
- * @param percent_motor percent of haptic vibration capacity to vibrate at,
- */
 void actuate_motor(int motor_idx, int duration, double percent_motor) {
   digitalWrite(MOTOR_PINS[motor_idx] + EN_OFFSET, HIGH);  // enable
   if (percent_motor > 1 || percent_motor < 0) {
@@ -76,14 +63,6 @@ void actuate_motor(int motor_idx, int duration, double percent_motor) {
   digitalWrite(MOTOR_PINS[motor_idx] + EN_OFFSET, LOW);  // disable
 }
 
-/* Vibrates selected motor for given pulse pattern. A pulse pattern array
- * consists of the duration and frequency of each pulse.
- *
- * @param motor_idx	      specified motor to vibrate
- * @param p	              array of pulse pattern
- * @param num_pulses	    number of pulses in array
- * @param intensity        intensity of vibration
- */
 void run_haptics(pulse* p, int num_pulses, int motor_idx, double intensity) {
   for (int j = 0; j < num_pulses; j++) {
     actuate_hz( motor_idx, p[j].dur, intensity, p[j].freq);
@@ -91,9 +70,7 @@ void run_haptics(pulse* p, int num_pulses, int motor_idx, double intensity) {
 
 }
 
-/* Test & debug functions */
-void
-haptics_test() {
+void haptics_test(void) {
   for (int i = 0; i < N_MOTORS; i++) {
     actuate_motor(i, 120, 0.85);
     delay(1000);
