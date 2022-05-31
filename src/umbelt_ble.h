@@ -1,30 +1,20 @@
-#include <bluefruit.h>
 #include <string.h>
 #include "Arduino.h"
 
 #define BLEUART_BUF_SIZE (32)
 
-struct BLEInterface {
-    // OTA DFU service
-    BLEDfu bledfu;
-
-    // Uart over BLE service
-    BLEUart bleuart;
-};
-
-void umbelt_ble_init();
-void umbelt_ble_start_adv();
-
-void umbelt_ble_tick();
-
-/* Reads from the incoming blueart datastream and puts data into packet buffer.
+/* Initializes the Umbelt BLE module:
+ * - Establishes event callbacks
+ * - Adds UART service
+ * - Begins advertising
  *
- * @param blue_uart BLEUart interface.
- * @param timeout Read timeout (in characters to read)
- * TODO: Make timeout occur in ms.
- *
- * @return number of characters read from the BLEUart stream.
+ * TODO: Pass in callbacks for when packet is found.
  */
-uint8_t read_bleuart_packet(BLEUart *ble_uart, uint16_t timeout);
+void umbelt_ble_init(void);
 
+/* Performs umbelt BLE tick.
+ * Checks to see if bytes are available on the UART line. If so, parses data
+ * packets and calls appropriate callback.
+ */
+void umbelt_ble_tick(void);
 

@@ -72,8 +72,12 @@ def main():
         # Establish Conenction
         if not uart_connection:
             print("Trying to connect...")
-            for adv in ble.start_scan(ProvideServicesAdvertisement):
-                if UARTService in adv.services:
+            for adv in ble.start_scan():
+                name = adv.complete_name
+                if not name: continue
+                print(name)
+                # if UARTService in adv.services:
+                if "Umbelt" in name:
                     uart_connection = ble.connect(adv)
                     print("Connected")
                     break

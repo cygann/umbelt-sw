@@ -7,21 +7,38 @@
 
 static uint8_t packet_buffer[BLEUART_BUF_SIZE];
 
-// Struc that represents an instance of this module.
+// Struct that represents an instance of this module.
+// connected : Whether umbelt is connected to ble central.
+// bledfu : DFU service.
+// bleuart : BLE Uart service.
 typedef struct umbelt_ble {
   bool connected;
-  BLEInterface ble;
+  BLEDfu bledfu;
+  BLEUart bleuart;
 } umbelt_ble;
 
+// Instance of this class.
 static umbelt_ble s_umbelt_ble;
 
 /* Callback for event handler. */
 void umbelt_ble_evt_handler(ble_evt_t* evt);
 
-void umbelt_ble_init() {
+/* Sets up all advertising settings, starts advertising. */
+void umbelt_ble_start_adv(void);
+
+/* Reads from the incoming blueart datastream and puts data into packet buffer.
+ *
+ * @param blue_uart BLEUart interface.
+ * @param timeout Read timeout (in characters to read)
+ * TODO: Make timeout occur in ms.
+ *
+ * @return number of characters read from the BLEUart stream.
+ */
+uint8_t read_bleuart_packet(uint16_t read_timeout);
+
+void umbelt_ble_init(void) {
 
   // Initialize instance of module
-  memset(&s_umbelt_ble, 0, sizeof(s_umbelt_ble));
   rtt.println("Bluetooth init");
 
   Bluefruit.begin();
@@ -33,7 +50,7 @@ void umbelt_ble_init() {
   Bluefruit.setEventCallback(&umbelt_ble_evt_handler);
 
   // Start UART service
-  s_umbelt_ble.ble.bleuart.begin();
+  s_umbelt_ble.bleuart.begin();
   rtt.println("BLE UART begin");
 
   // Start advertising.
@@ -44,16 +61,19 @@ void umbelt_ble_init() {
 void umbelt_ble_evt_handler(ble_evt_t* evt) {
   int evt_id = evt->header.evt_id;
 
+  rtt.print("Event id is: ");
+  rtt.println(evt_id);
+
   switch(evt_id) {
 
     case BLE_GAP_EVT_CONNECTED:
       s_umbelt_ble.connected = true;
-      rtt.println("Connected!");
+      rtt.println("Connected to central.");
       break;
 
     case BLE_GAP_EVT_DISCONNECTED:
       s_umbelt_ble.connected = false;
-      rtt.println("Disconnected!");
+      rtt.println("Disconnected from central.");
       break;
 
     default:
@@ -62,13 +82,13 @@ void umbelt_ble_evt_handler(ble_evt_t* evt) {
 
 }
 
-void umbelt_ble_start_adv() {
+void umbelt_ble_start_adv(void) {
   // Advertising packet
   Bluefruit.Advertising.addFlags(BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE);
   Bluefruit.Advertising.addTxPower();
 
   // Include the BLE UART (AKA 'NUS') 128-bit UUID
-  Bluefruit.Advertising.addService(s_umbelt_ble.ble.bleuart);
+  Bluefruit.Advertising.addService(s_umbelt_ble.bleuart);
 
   // Secondary Scan Response packet (optional)
   // Since there is no room for 'Name' in Advertising packet
@@ -90,12 +110,12 @@ void umbelt_ble_start_adv() {
   rtt.println("Advertise begin");
 }
 
-void umbelt_ble_tick() {
-  uint8_t len = read_bleuart_packet(&(s_umbelt_ble.ble.bleuart), /*timeout=*/500);
+void umbelt_ble_tick(void) {
+  uint8_t len = read_bleuart_packet(/*timeout=*/500);
   if (len == 0) return;
 }
 
-uint8_t read_bleuart_packet(BLEUart *ble_uart, uint16_t read_timeout) {
+uint8_t read_bleuart_packet(uint16_t read_timeout) {
   uint16_t timeout = read_timeout;
   uint16_t idx = 0;
 
@@ -107,8 +127,8 @@ uint8_t read_bleuart_packet(BLEUart *ble_uart, uint16_t read_timeout) {
     if (idx >= BLEUART_BUF_SIZE) break;
     if (idx == packet_size) break;
 
-    while (ble_uart->available()) {
-      char c =  ble_uart->read();
+    while (s_umbelt_ble.bleuart.available()) {
+      char c =  s_umbelt_ble.bleuart.read();
       if (c == '!') {
         idx = 0;
       }
