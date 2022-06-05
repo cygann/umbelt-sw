@@ -3,6 +3,7 @@
 /* Umbelt modules */
 #include "umbelt_ble.h"
 #include "umbelt_common.h"
+#include "umbelt_battery.h"
 #include "umbelt_haptics.h"
 #include "umbelt_haptic_patterns.h"
 #include "umbelt_compass.h"
@@ -28,4 +29,5 @@ void loop(void) {
     run_haptics(bach, /*num_pulses=*/32, /*motor_idx=*/0, /*intensity=*/0.85);
     umbelt_compass_tick();
     umbelt_ble_tick();
+    check_battery();
 }

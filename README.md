@@ -33,7 +33,7 @@ After soldering on components, it's useful to check the soldering of the motor d
     a. Plug the board into 5V via the USB-C connector. Turn the switch to the `ON` position to enable the 3V regulator.
     b. Connect a J-Link to the SWD/debug port.
     c. Flash the bootloader with `make BOARD=feather_nrf52840_express flash`.
-4. Upload the motor testing program with `pio run -t upload -e motortest`.
+4. Upload the motor testing program with `pio run -t upload -e soldertest`.
 5. Use a multimeter in DC voltage mode to probe each thin pad on the high density flex connector with the other probe on GND. Check that each motor output swings a from 0 to 3.3V. If any outputs don't do this then the soldering of the corresponding motor driver probably needs to be fixed.
 
 ## Debug output
