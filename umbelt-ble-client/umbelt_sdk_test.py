@@ -1,8 +1,8 @@
-from ble_host import UmbeltBoard
+from umbelt import Umbelt
 
 
 def main():
-    umb = UmbeltBoard(name="Umlaut")
+    umb = Umbelt(name="Umlaut")
 
     if umb.connect():
         umb.send_command('MU')

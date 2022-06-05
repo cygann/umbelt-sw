@@ -1,16 +1,15 @@
 """
-Python script for pairing host device with an umbelt as the peripheral over BLE.
-Once connected, this program allows you to input various commands that will be
-sent to the umbelt.
+Umbelt class that represents the primary SDK interface.
+
+The UmbeltBoard class offers abstractions for connecting and writing commands
+to Umbelt boards.
 """
 from adafruit_ble import BLERadio
 from adafruit_ble.advertising.standard import ProvideServicesAdvertisement
 from adafruit_ble.services.nordic import UARTService
 
-import umbelt_ble_actions as ub
 
-
-class UmbeltBoard:
+class Umbelt:
 
     def __init__(self, name: str = "Umlaut") -> None:
         """
