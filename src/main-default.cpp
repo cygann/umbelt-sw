@@ -3,7 +3,7 @@
 /* Umbelt modules */
 #include "umbelt_ble.h"
 #include "umbelt_common.h"
-#include "battery.h"
+#include "umbelt_battery.h"
 #include "umbelt_haptics.h"
 #include "umbelt_haptic_patterns.h"
 #include "umbelt_compass.h"
