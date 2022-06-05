@@ -19,10 +19,13 @@ void setup(void) {
     umbelt_haptics_init();
     umbelt_compass_init(UMBELT_COMPASS_ENABLE);
 
+    umbelt_ble_init();
+
     init_indicator_led();
 }
 
 void loop(void) {
     run_haptics(bach, /*num_pulses=*/32, /*motor_idx=*/0, /*intensity=*/0.85);
     umbelt_compass_tick();
+    umbelt_ble_tick();
 }

@@ -1,15 +1,20 @@
-#include <bluefruit.h>
 #include <string.h>
 #include "Arduino.h"
 
-struct BLEInterface {
-    // OTA DFU service
-    BLEDfu bledfu;
+#define BLEUART_BUF_SIZE (32)
 
-    // Uart over BLE service
-    BLEUart bleuart;
-};
+/* Initializes the Umbelt BLE module:
+ * - Establishes event callbacks
+ * - Adds UART service
+ * - Begins advertising
+ *
+ * TODO: Pass in callbacks for when packet is found.
+ */
+void umbelt_ble_init(void);
 
-void umbelt_ble_init(BLEInterface *ble);
+/* Performs umbelt BLE tick.
+ * Checks to see if bytes are available on the UART line. If so, parses data
+ * packets and calls appropriate callback.
+ */
+void umbelt_ble_tick(void);
 
-void umbelt_ble_start_adv(BLEInterface *ble);
