@@ -9,102 +9,104 @@ from adafruit_ble.services.nordic import UARTService
 
 import umbelt_ble_actions as ub
 
-ble = BLERadio()
 
-uart_connection = None
+class UmbeltBoard:
 
-def input_command():
-    """
-    Handles user input for command selection.
-    Outputs:
-        - The umbelt command as a string (without any UART-protocol specific
-          parts such as the checksum)
-    """
-    commands = {
-        'T': ub.current_time,
-        'X': ub.custom_command,
-        'MU': ub.motor_up,
-        'MD': ub.motor_down,
-        'ML': ub.motor_left,
-        'MR': ub.motor_right,
-    }
+    def __init__(self, name: str = "Umlaut") -> None:
+        """
+        Initializes an Umbelt board object.
 
-    func = None
-    while func is None:
-        choice = input("Select a command: ")
-        func = commands.get(choice)
+        @param name : Name of umbelt board
+        """
 
-        if func is None:
-            print("Invalid command. Use 'X' to type a custom command.\n")
+        self.name = name
 
-    command_str = func()
-    return command_str
+        self.ble = BLERadio()
+        self.connection = None  # BLE connection handle
 
-def print_packet_debug(command_str, n_bytes, cmd, encoded):
+    def connect(self, timeout: int = 20) -> bool:
+        """
+        Connects to an umbelt board.
 
-    print('----- PACKET DEBUG -------')
-    print('[Raw Command string]:' + command_str)
-    print('[Command string with header]:' + cmd)
+        @param timeout : How long to wait (in seconds) before giving up.
 
-    cmd_arr = [c for c in cmd]
-    print('[Length of the command array:' + str(len(cmd_arr)))
-    print('[Command array]:')
-    print(cmd_arr)
-    cmd_arr_hx = [hex(ord(c)) for c in cmd_arr]
-    print('[Command array (hex)]:')
-    print(cmd_arr_hx)
+        @return True if successfully connected to Umbelt, False otherwise.
+        """
 
-    print('[Encoded command]:' + str(encoded))
-    print('[Length of encoded command]:' + str(len(encoded)))
+        # Don't do anything if we are already connected to this Umbelt.
+        if self.connection and self.connection.connected:
+            print("Already connected with Umbelt board {self.name}.")
+            return True
 
-    print()
+        print(f"Trying to connect to Umbelt board {self.name}.")
 
-def encode_str(cmd):
-
-    cmd_arr = [ord(c) for c in cmd]
-    cmd_bytes = bytes(cmd_arr)
-
-    return cmd_bytes
-
-def main():
-    global uart_connection
-    while True:
-        # Establish Conenction
-        if not uart_connection:
-            print("Trying to connect...")
-            for adv in ble.start_scan():
+        # Attempt to connect to board in timeout seconds.
+        start_time = time.time()
+        while (time.time() - start_time < timeout) and not self.connection:
+            # Attempt to establish connection
+            for adv in self.ble.start_scan():
                 name = adv.complete_name
                 if not name: continue
-                print(name)
-                # if UARTService in adv.services:
+
+                # TODO: Establish a naming scheme that allows for recognizable
+                # yet customizable umbelt device names.
                 if "Umbelt" in name:
-                    uart_connection = ble.connect(adv)
-                    print("Connected")
+                    self.connection = self.ble.connect(adv)
                     break
-            ble.stop_scan()
+            self.ble.stop_scan()
 
-        if uart_connection and uart_connection.connected:
-            uart_service = uart_connection[UARTService]
-            while uart_connection.connected:
-                # Get input command from user
-                command_str = input_command()
+        if self.connection:
+            print(f"Successfully connected with Umbelt board {self.name}.")
+            return True
+        else:
+            print(f"Failed to connect to Umbelt board {self.name}.")
+            return False
 
-                # Compute length of the raw command str
-                n_bytes = len(command_str)
 
-                # Prepend '!' and command len + 3 as the packet header:
-                #   - 1 byte for '!'
-                #   - 1 byte for len itself
-                #   - 1 byte for the checksum
-                cmd = '!' + chr(n_bytes + 3) + command_str
+    def send_command(command_payload, verbose : bool = False) -> bool:
+        """
+        @param command_payload
+        @param verbose Whether to print debug logs on what payload was sent.
 
-                encoded = encode_str(cmd)
-                print_packet_debug(command_str, n_bytes, cmd, xsum, cmd,
-                        encoded)
+        @return True on success, False on failure.
+        """
+        n_bytes = len(command_payload)
 
-                # Send to device
-                uart_service.write(encoded)
-                print(uart_service.readline().decode("ascii"))
+        # Prepend '!' and n_bytes + 2 as the packet header:
+        #   - 1 byte for '!'
+        #   - 1 byte for len itself
+        cmd = '!' + chr(n_bytes + 2) + command_payload
+        cmd_arr = [ord(c) for c in cmd]
+        encoded = bytes(cmd_arr)
 
-if __name__ == "__main__":
-    main()
+        if verbose:
+            print_packet_debug(command_payload, n_bytes, cmd, encoded)
+
+        # Send payload to device.
+        try:
+            uart_service.write(encoded)
+            print(uart_service.readline().decode("ascii"))
+        except:
+            print('Error in sending command to Umbelt.')
+            return False
+
+        return True
+
+    def print_packet_debug(command_str, n_bytes, cmd, encoded):
+
+        print('----- PACKET DEBUG -------')
+        print('[Raw Command string]:' + command_str)
+        print('[Command string with header]:' + cmd)
+
+        cmd_arr = [c for c in cmd]
+        print('[Length of the command array:' + str(len(cmd_arr)))
+        print('[Command array]:')
+        print(cmd_arr)
+        cmd_arr_hx = [hex(ord(c)) for c in cmd_arr]
+        print('[Command array (hex)]:')
+        print(cmd_arr_hx)
+
+        print('[Encoded command]:' + str(encoded))
+        print('[Length of encoded command]:' + str(len(encoded)))
+
+        print()
