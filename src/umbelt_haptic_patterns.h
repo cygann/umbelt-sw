@@ -1,3 +1,16 @@
+#include "umbelt_haptics.h"
+
+/* --------- Umbelt Core Haptices ----------- */
+
+static pulse batt_warn_pulse[6] = {
+  {RESONANT_FREQ, 50},
+  {PAUSE_FREQ, 50},
+  {RESONANT_FREQ, 50},
+  {PAUSE_FREQ, 50},
+  {RESONANT_FREQ, 50},
+  {PAUSE_FREQ, 50}
+};
+
 /* --------- Haptic Sample Library ---------- */
 static float noteFrequenciesExt[11] {98, 110, 123, 131, 147, 165, 175, 196, 220, 247, 261}; // G2 --> C4
 

@@ -89,7 +89,7 @@ void umbelt_compass_tick(void) {
     if (!heading_change_greater_than(s_compass.update_threshold)) return;
     int bin = 13 - (s_compass.heading * N_MOTORS) / 360;
 
-    actuate_motor(bin, /*duration=*/ 80 /*ms*/, /*percent_motor=*/1);
+    actuate_motor(bin, /*duration=*/ 50 /*ms*/, /*percent_motor=*/1);
 
     // Update this state as the previous one.
     s_compass.last_update_motor = bin;

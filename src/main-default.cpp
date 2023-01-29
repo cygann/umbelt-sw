@@ -11,7 +11,7 @@
 
 #define BAT_PIN 20
 
-#define UMBELT_COMPASS_ENABLE false
+#define UMBELT_COMPASS_ENABLE true
 
 void setup(void) {
     rtt.println(" ======== Umbelt =====|=[] ");
@@ -23,11 +23,11 @@ void setup(void) {
     umbelt_ble_init();
 
     init_indicator_led();
+    run_haptics(bach, /*num_pulses=*/32, /*motor_idx=*/0, /*intensity=*/1);
 }
 
 void loop(void) {
-    run_haptics(bach, /*num_pulses=*/32, /*motor_idx=*/0, /*intensity=*/0.85);
     umbelt_compass_tick();
     umbelt_ble_tick();
-    check_battery();
+    battery_tick();
 }
