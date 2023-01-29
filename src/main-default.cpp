@@ -27,7 +27,13 @@ void setup(void) {
 }
 
 void loop(void) {
+    // run_haptics(bach, /*num_pulses=*/32, /*motor_idx=*/0, /*intensity=*/0.85);
     umbelt_compass_tick();
     umbelt_ble_tick();
     battery_tick();
 }
+
+
+// TODO: write a callback here to handle the umbelt opcodes such that response
+// to all actions is routed through here (umbelt_ble should not call the
+// haptics module itself).
