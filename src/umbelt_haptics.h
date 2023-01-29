@@ -1,3 +1,6 @@
+#ifndef UMBELT_HAPTICS_H
+#define UMBELT_HAPTICS_H
+
 /*  Umbelt Haptics module.
  *  ----------------------
  *  Contains functions for acuating and stopping haptic motors on the belt.
@@ -5,7 +8,8 @@
 
 #include <Arduino.h>
 
-#define RESONANT_FREQ 170 // in Hz
+#define RESONANT_FREQ 170  // in Hz
+#define PAUSE_FREQ 0  // frequency argument to give for a pause pulse
 
 const int N_MOTORS = 13;
 const int MOTOR_PINS[13] = {MOTOR0, MOTOR1, MOTOR2, MOTOR3, MOTOR4, MOTOR5,
@@ -64,3 +68,5 @@ void actuate_hz(int motor_pin, int duration, double percent_motor, float frequen
  * Useful for motor debugging.
  */
 void haptics_test(void);
+
+#endif

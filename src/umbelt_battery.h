@@ -3,15 +3,16 @@
  */
 
 typedef enum {
-  BATT_CHARGED,
-  BATT_LOW,
-  BATT_DRAINED
+  BATT_CHARGED,  // sufficient charge
+  BATT_LOW,  // battery nearly drained
+  BATT_DRAINED,  // battery is drained, recharge needed
+  NO_BATT  // battery not detected
 } batt_states;
 
 
 /* Updates the known battery voltage and state by reading from the battery
  * pin. */
-void check_battery();
+void battery_tick();
 
 /* Returns the known battery state. Does not read the battery state. */
 batt_states get_battery_state();
