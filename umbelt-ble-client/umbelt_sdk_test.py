@@ -1,11 +1,8 @@
 from umbelt import Umbelt
 
 
-def main():
-    umb = Umbelt(name="Umlaut")
+umb = Umbelt(name="Umlaut")
 
-    if umb.connect():
-        umb.send_command('MU')
+if umb.connect():
+    umb.vibrate_motor(motor_idx=1, duration=200, intensity=1.0)
 
-if __name__ == "__main__":
-    main()

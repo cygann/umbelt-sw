@@ -17,4 +17,3 @@ void umbelt_ble_init(void);
  * packets and calls appropriate callback.
  */
 void umbelt_ble_tick(void);
-
